@@ -1,0 +1,52 @@
+---
+description: access-manager-ui repository rules — applies to all files
+alwaysApply: true
+---
+
+# access-manager-ui — Cursor Rules
+
+Read `AGENTS.md` for full context. These rules are the distilled version for inline guidance.
+
+## Repository layout
+
+- `src/api/` — client.ts (fetch wrapper) + one file per entity (domains.ts, users.ts, …)
+- `src/pages/` — route-level components (thin, no business logic)
+- `src/hooks/` — TanStack Query hooks and mutation wrappers
+- `src/components/` — shared UI (shadcn/ui components copied here)
+- `src/lib/` — pure utilities (cn(), etc.)
+
+## Layer boundary (enforce strictly)
+
+Pages → Hooks → `api/*.ts` named functions → `api/client.ts`
+
+- Never import `api/client.ts` directly in a page or hook
+- Never import React in `api/client.ts` or `api/*.ts`
+- No business logic in JSX — extract to hooks or helpers
+
+## Security
+
+- Never write secrets, tokens, or API keys in source code
+- `.env.local` is gitignored; reference `.env.example` for variable names
+- `VITE_API_BEARER_TOKEN` lives in env only — never hardcoded
+
+## No unused code
+
+- Do not add uncalled functions or components
+- Defer speculative additions to a GitHub issue
+- Mark future work: `// TODO(T##): brief reason`
+
+## After each change
+
+Run: `make type-check`, `make lint`, `make build`
+
+Add an Unreleased bullet to `CHANGELOG.md` if the change is user-visible.
+
+## Branching (AI default)
+
+- Create topic branch from main BEFORE changing files
+- Format: `author/prefix/short-kebab-description` (lowercase)
+- Do NOT run `git commit`, `git push`, or `gh pr create` unless the user explicitly asks
+
+## Milestone
+
+All new work → **26Q2** milestone

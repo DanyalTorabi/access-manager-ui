@@ -1,0 +1,55 @@
+---
+description: Code review checklist for access-manager-ui pull requests
+alwaysApply: false
+---
+
+# Code Review — access-manager-ui
+
+When reviewing a PR or diff:
+
+## Process
+
+- Review **every changed file** line by line — do not skim or skip "low-risk" files
+- Flag every issue; provide a concrete fix, not "acceptable"
+- For each issue: file + approximate line, what's wrong, concrete fix
+
+## Layer violations (check these first)
+
+- Does any page component import `api/client.ts` directly? (Should go through `api/*.ts`)
+- Does `api/client.ts` import React? (Must not)
+- Is there business logic in JSX? (Extract to hook or helper)
+
+## TypeScript
+
+- Does the PR introduce `any`, `@ts-ignore`, or `as unknown as T` without explanation?
+- Are Zod schemas aligned with the OpenAPI types in `src/api/schema.ts`?
+- Are all API response types derived from `src/api/types.ts` (not redefined inline)?
+
+## Security
+
+- Any secrets, tokens, or credentials in source? (Block immediately)
+- Is `VITE_API_BEARER_TOKEN` only read from env (not hardcoded)?
+- Does any new fetch call bypass `api/client.ts` (missing auth header)?
+
+## React patterns
+
+- Are mutations using `useMutation` from TanStack Query (not manual `useState` + fetch)?
+- Are queries using `useQuery` with proper `queryKey` arrays (including all variables)?
+- Is `queryClient.invalidateQueries` called on mutation success?
+- Are forms using React Hook Form + Zod (not manual `onChange` state)?
+
+## Correctness
+
+- Are destructive actions (delete, patch) guarded by confirmation?
+- Are error states handled (show message, not silent failure)?
+- Is pagination state reset when search changes?
+
+## Changelog and docs
+
+- Does a user-visible change have an Unreleased entry in `CHANGELOG.md`?
+- If a new env var was added, is `.env.example` updated?
+- If the src layout changed, is `AGENTS.md` or `docs/frontend-architecture.md` updated?
+
+## After reviewing
+
+List each open issue (file, line, description). State explicitly whether it is a blocker or suggestion.

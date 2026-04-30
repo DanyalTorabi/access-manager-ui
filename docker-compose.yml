@@ -1,0 +1,14 @@
+# Local app container. Port bound to loopback only.
+# VITE_API_BASE_URL is a build-time arg baked into the JS bundle.
+# Default points to host-running access-manager (via host.docker.internal).
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://host.docker.internal:8080}
+    ports:
+      - "127.0.0.1:3000:80"
+    restart: unless-stopped
