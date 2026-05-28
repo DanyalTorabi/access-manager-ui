@@ -1,0 +1,31 @@
+import { api } from './client'
+import type { Resource, ListParams, ListResponse } from './types'
+
+function buildQuery(params: ListParams): string {
+  const q = new URLSearchParams()
+  if (params.offset !== undefined) q.set('offset', String(params.offset))
+  if (params.limit !== undefined) q.set('limit', String(params.limit))
+  if (params.search) q.set('search', params.search)
+  if (params.search_type) q.set('search_type', params.search_type)
+  if (params.sort) q.set('sort', params.sort)
+  if (params.order) q.set('order', params.order)
+  const s = q.toString()
+  return s ? `?${s}` : ''
+}
+
+export const resourcesApi = {
+  list: (domainId: string, params: ListParams = {}) =>
+    api.get<ListResponse<Resource>>(`/api/v1/domains/${domainId}/resources${buildQuery(params)}`),
+
+  get: (domainId: string, id: string) =>
+    api.get<Resource>(`/api/v1/domains/${domainId}/resources/${id}`),
+
+  create: (domainId: string, title: string) =>
+    api.post<Resource>(`/api/v1/domains/${domainId}/resources`, { title }),
+
+  update: (domainId: string, id: string, title: string) =>
+    api.patch<Resource>(`/api/v1/domains/${domainId}/resources/${id}`, { title }),
+
+  delete: (domainId: string, id: string) =>
+    api.delete(`/api/v1/domains/${domainId}/resources/${id}`),
+}

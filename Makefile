@@ -1,4 +1,4 @@
-.PHONY: dev build type-check lint preview generate-types \
+.PHONY: dev build type-check lint test test-run preview generate-types \
         docker-build docker-up docker-down docker-logs
 
 dev:
@@ -12,6 +12,12 @@ type-check:
 
 lint:
 	npm run lint
+
+test:
+	npm run test
+
+test-run:
+	npm run test:run
 
 preview:
 	npm run preview
