@@ -30,6 +30,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiError(res.status, body.error ?? res.statusText)
   }
 
+  if (res.status === 204 || res.status === 205) {
+    return undefined as T
+  }
+
   return res.json() as Promise<T>
 }
 

@@ -1,5 +1,18 @@
-import { createRootRoute, createRoute, createRouter, Link, Outlet } from '@tanstack/react-router'
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router'
 import DomainsPage from '@/pages/DomainsPage'
+import DomainDetailLayout from '@/pages/DomainDetailLayout'
+import UsersPage from '@/pages/UsersPage'
+import GroupsPage from '@/pages/GroupsPage'
+import ResourcesPage from '@/pages/ResourcesPage'
+import AccessTypesPage from '@/pages/AccessTypesPage'
+import PermissionsPage from '@/pages/PermissionsPage'
+import { Sidebar } from '@/components/Sidebar'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -7,22 +20,9 @@ const rootRoute = createRootRoute({
 
 function RootLayout() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 h-14 flex items-center gap-6">
-          <span className="font-semibold text-sm">Access Manager</span>
-          <nav className="flex gap-4 text-sm">
-            <Link
-              to="/"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              activeProps={{ className: 'text-foreground font-medium' }}
-            >
-              Domains
-            </Link>
-          </nav>
-        </div>
-      </header>
-      <main className="container mx-auto px-4 py-8">
+    <div className="flex h-screen overflow-hidden bg-background">
+      <Sidebar />
+      <main className="flex-1 overflow-y-auto p-8">
         <Outlet />
       </main>
     </div>
@@ -32,10 +32,64 @@ function RootLayout() {
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  beforeLoad: () => {
+    throw redirect({ to: '/domains' })
+  },
+})
+
+const domainsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/domains',
   component: DomainsPage,
 })
 
-export const routeTree = rootRoute.addChildren([indexRoute])
+const domainRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/domains/$domainId',
+  component: DomainDetailLayout,
+})
+
+const usersRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/users',
+  component: UsersPage,
+})
+
+const groupsRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/groups',
+  component: GroupsPage,
+})
+
+const resourcesRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/resources',
+  component: ResourcesPage,
+})
+
+const accessTypesRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/access-types',
+  component: AccessTypesPage,
+})
+
+const permissionsRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/permissions',
+  component: PermissionsPage,
+})
+
+export const routeTree = rootRoute.addChildren([
+  indexRoute,
+  domainsRoute,
+  domainRoute.addChildren([
+    usersRoute,
+    groupsRoute,
+    resourcesRoute,
+    accessTypesRoute,
+    permissionsRoute,
+  ]),
+])
 
 export const router = createRouter({ routeTree })
 

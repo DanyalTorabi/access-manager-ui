@@ -1,50 +1,50 @@
-import { useState } from "react"
-import type { ColumnDef } from "@tanstack/react-table"
-import { Trash2, ArrowRight } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { useNavigate } from "@tanstack/react-router"
-import type { Domain } from "@/api/types"
-import { EntityTable } from "@/components/EntityTable"
-import { EntityDrawer } from "@/components/EntityDrawer"
-import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from 'react'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Trash2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useParams } from '@tanstack/react-router'
+import type { User } from '@/api/types'
+import { EntityTable } from '@/components/EntityTable'
+import { EntityDrawer } from '@/components/EntityDrawer'
+import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
-  useDomainsQuery,
-  useCreateDomain,
-  useUpdateDomain,
-  useDeleteDomain,
-} from "@/hooks/useDomains"
+  useUsersQuery,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser,
+} from '@/hooks/useUsers'
 
 const PAGE_SIZE = 20
 
-const domainSchema = z.object({ title: z.string().min(1, "Title is required") })
-type DomainForm = z.infer<typeof domainSchema>
+const userSchema = z.object({ title: z.string().min(1, 'Title is required') })
+type UserForm = z.infer<typeof userSchema>
 
-export default function DomainsPage() {
-  const navigate = useNavigate()
+export default function UsersPage() {
+  const { domainId } = useParams({ from: '/domains/$domainId/users' })
   const [offset, setOffset] = useState(0)
-  const [sort, setSort] = useState("title")
-  const [order, setOrder] = useState<"asc" | "desc">("asc")
+  const [sort, setSort] = useState('title')
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [editingDomain, setEditingDomain] = useState<Domain | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<Domain | null>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null)
 
-  const { data, isLoading, isError } = useDomainsQuery({
+  const { data, isLoading, isError } = useUsersQuery(domainId, {
     offset,
     limit: PAGE_SIZE,
     sort,
     order,
   })
 
-  const createMutation = useCreateDomain()
-  const updateMutation = useUpdateDomain()
-  const deleteMutation = useDeleteDomain()
+  const createMutation = useCreateUser(domainId)
+  const updateMutation = useUpdateUser(domainId)
+  const deleteMutation = useDeleteUser(domainId)
 
-  const columns: ColumnDef<Domain>[] = [
+  const columns: ColumnDef<User>[] = [
     { accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
@@ -58,18 +58,7 @@ export default function DomainsPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation()
-              void navigate({ to: "/domains/$domainId/users", params: { domainId: row.original.ID } })
-            }}
-            aria-label="Open domain"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+        <div className="flex justify-end">
           <Button
             variant="ghost"
             size="icon"
@@ -77,7 +66,7 @@ export default function DomainsPage() {
               e.stopPropagation()
               setDeleteTarget(row.original)
             }}
-            aria-label="Delete domain"
+            aria-label="Delete user"
           >
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
@@ -86,20 +75,18 @@ export default function DomainsPage() {
     },
   ]
 
-  const openCreate = () => {
-    setEditingDomain(null)
-    setDrawerOpen(true)
-  }
-  const openEdit = (domain: Domain) => {
-    setEditingDomain(domain)
-    setDrawerOpen(true)
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Domains</h1>
-        <Button onClick={openCreate}>+ New Domain</Button>
+        <h1 className="text-2xl font-semibold">Users</h1>
+        <Button
+          onClick={() => {
+            setEditingUser(null)
+            setDrawerOpen(true)
+          }}
+        >
+          + New User
+        </Button>
       </div>
 
       <EntityTable
@@ -107,33 +94,35 @@ export default function DomainsPage() {
         data={data?.data ?? []}
         isLoading={isLoading}
         isError={isError}
-        errorMessage="Failed to load domains."
+        errorMessage="Failed to load users."
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
-        onRowDoubleClick={openEdit}
-        onSortChange={(s, o) => { setSort(s); setOrder(o) }}
-        searchPlaceholder="Search domains…"
+        onRowDoubleClick={(user) => {
+          setEditingUser(user)
+          setDrawerOpen(true)
+        }}
+        onSortChange={(s, o) => {
+          setSort(s)
+          setOrder(o)
+        }}
+        searchPlaceholder="Search users…"
       />
-
-      <p className="text-xs text-muted-foreground">
-        Double-click a row to edit · click a domain to enter it.
-      </p>
 
       <EntityDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editingDomain ? "Edit Domain" : "New Domain"}
+        title={editingUser ? 'Edit User' : 'New User'}
       >
-        <DomainForm
-          key={editingDomain?.ID ?? "new"}
-          defaultTitle={editingDomain?.Title ?? ""}
+        <TitleForm
+          key={editingUser?.ID ?? 'new'}
+          defaultTitle={editingUser?.Title ?? ''}
           isSubmitting={createMutation.isPending || updateMutation.isPending}
           error={createMutation.error?.message ?? updateMutation.error?.message}
           onSubmit={(title) => {
-            if (editingDomain) {
+            if (editingUser) {
               updateMutation.mutate(
-                { id: editingDomain.ID, title },
+                { id: editingUser.ID, title },
                 { onSuccess: () => setDrawerOpen(false) },
               )
             } else {
@@ -146,7 +135,7 @@ export default function DomainsPage() {
 
       <ConfirmDeleteDialog
         open={!!deleteTarget}
-        entityName={deleteTarget?.Title ?? ""}
+        entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
         onConfirm={() => {
           if (deleteTarget) {
@@ -159,7 +148,7 @@ export default function DomainsPage() {
   )
 }
 
-function DomainForm({
+function TitleForm({
   defaultTitle,
   isSubmitting,
   error,
@@ -176,16 +165,16 @@ function DomainForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DomainForm>({
-    resolver: zodResolver(domainSchema),
+  } = useForm<UserForm>({
+    resolver: zodResolver(userSchema),
     defaultValues: { title: defaultTitle },
   })
 
   return (
     <form onSubmit={handleSubmit((d) => onSubmit(d.title))} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="domain-title">Title</Label>
-        <Input id="domain-title" autoFocus {...register("title")} />
+        <Label htmlFor="user-title">Title</Label>
+        <Input id="user-title" autoFocus {...register('title')} />
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
@@ -194,7 +183,7 @@ function DomainForm({
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving…" : "Save"}
+          {isSubmitting ? 'Saving…' : 'Save'}
         </Button>
       </div>
     </form>
