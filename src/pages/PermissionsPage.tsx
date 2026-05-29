@@ -109,6 +109,7 @@ export default function PermissionsPage() {
         <Button
           onClick={() => {
             setEditingPermission(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -127,6 +128,7 @@ export default function PermissionsPage() {
         onOffsetChange={setOffset}
         pageSize={PAGE_SIZE}
         onRowDoubleClick={(perm) => {
+          updateMutation.reset()
           setEditingPermission(perm)
           setDrawerOpen(true)
         }}
@@ -173,6 +175,7 @@ export default function PermissionsPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

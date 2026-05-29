@@ -82,6 +82,7 @@ export default function UsersPage() {
         <Button
           onClick={() => {
             setEditingUser(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -100,6 +101,7 @@ export default function UsersPage() {
         onOffsetChange={setOffset}
         pageSize={PAGE_SIZE}
         onRowDoubleClick={(user) => {
+          updateMutation.reset()
           setEditingUser(user)
           setDrawerOpen(true)
         }}
@@ -138,6 +140,7 @@ export default function UsersPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

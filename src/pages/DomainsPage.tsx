@@ -87,10 +87,12 @@ export default function DomainsPage() {
   ]
 
   const openCreate = () => {
+    createMutation.reset()
     setEditingDomain(null)
     setDrawerOpen(true)
   }
   const openEdit = (domain: Domain) => {
+    updateMutation.reset()
     setEditingDomain(domain)
     setDrawerOpen(true)
   }
@@ -148,8 +150,7 @@ export default function DomainsPage() {
       <ConfirmDeleteDialog
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ""}
-        isPending={deleteMutation.isPending}
-        onConfirm={() => {
+        isPending={deleteMutation.isPending}        error={deleteMutation.error?.message}        onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })
           }

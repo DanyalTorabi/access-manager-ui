@@ -82,6 +82,7 @@ export default function ResourcesPage() {
         <Button
           onClick={() => {
             setEditingResource(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -100,6 +101,7 @@ export default function ResourcesPage() {
         onOffsetChange={setOffset}
         pageSize={PAGE_SIZE}
         onRowDoubleClick={(resource) => {
+          updateMutation.reset()
           setEditingResource(resource)
           setDrawerOpen(true)
         }}
@@ -138,6 +140,7 @@ export default function ResourcesPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

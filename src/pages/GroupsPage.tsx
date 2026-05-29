@@ -102,6 +102,7 @@ export default function GroupsPage() {
         <Button
           onClick={() => {
             setEditingGroup(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -120,6 +121,7 @@ export default function GroupsPage() {
         onOffsetChange={setOffset}
         pageSize={PAGE_SIZE}
         onRowDoubleClick={(group) => {
+          updateMutation.reset()
           setEditingGroup(group)
           setDrawerOpen(true)
         }}
@@ -167,6 +169,7 @@ export default function GroupsPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

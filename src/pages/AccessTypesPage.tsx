@@ -94,6 +94,7 @@ export default function AccessTypesPage() {
         <Button
           onClick={() => {
             setEditingAccessType(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -112,6 +113,7 @@ export default function AccessTypesPage() {
         onOffsetChange={setOffset}
         pageSize={PAGE_SIZE}
         onRowDoubleClick={(at) => {
+          updateMutation.reset()
           setEditingAccessType(at)
           setDrawerOpen(true)
         }}
@@ -153,6 +155,7 @@ export default function AccessTypesPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })
