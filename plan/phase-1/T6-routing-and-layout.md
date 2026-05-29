@@ -39,7 +39,7 @@ Establish the full application shell: router, persistent sidebar, domain-scoped 
 
 ## Files / paths
 
-- Created: `src/router.tsx`, `src/components/Sidebar.tsx`, `src/components/ThemeProvider.tsx`, `src/components/ThemeToggle.tsx`, `src/pages/DomainDetailLayout.tsx`
+- Created: `src/router.tsx`, `src/components/RootLayout.tsx`, `src/components/Sidebar.tsx`, `src/components/ThemeProvider.tsx`, `src/components/ThemeToggle.tsx`, `src/pages/DomainDetailLayout.tsx`
 - Edited: `src/main.tsx`
 - Deleted: `src/App.tsx`, `src/App.css`
 
