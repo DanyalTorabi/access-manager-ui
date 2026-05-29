@@ -4,8 +4,18 @@ import type { ListParams } from '@/api/types'
 
 export function useDomainsQuery(params: ListParams = {}) {
   return useQuery({
-    queryKey: ['domains', params.offset ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['domains', params.offset ?? 0, params.limit ?? 20, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => domainsApi.list(params),
+  })
+}
+
+/** Fetch a single domain by id. Shares the cache with DomainDetailLayout's prefetch. */
+export function useDomainQuery(id: string) {
+  return useQuery({
+    queryKey: ['domains', id],
+    queryFn: () => domainsApi.get(id),
+    enabled: !!id,
+    staleTime: 60_000,
   })
 }
 
