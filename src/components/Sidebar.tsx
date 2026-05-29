@@ -1,7 +1,7 @@
 import { Globe, Users, Layers, Package, Key, ShieldCheck, ChevronLeft } from 'lucide-react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { domainsApi } from '@/api/domains'
+import { domainsApi, domainQueryKey } from '@/api/domains'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -30,7 +30,7 @@ export function Sidebar() {
   })
 
   const { data: domain } = useQuery({
-    queryKey: ['domains', activeDomainId],
+    queryKey: domainQueryKey(activeDomainId ?? ''),
     queryFn: () => domainsApi.get(activeDomainId!),
     enabled: !!activeDomainId,
     staleTime: 60_000,
