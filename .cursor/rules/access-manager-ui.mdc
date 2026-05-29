@@ -41,11 +41,21 @@ Run: `make type-check`, `make lint`, `make build`
 
 Add an Unreleased bullet to `CHANGELOG.md` if the change is user-visible.
 
-## Branching (AI default)
+## Branching and PR workflow (AI default)
 
-- Create topic branch from main BEFORE changing files
-- Format: `author/prefix/short-kebab-description` (lowercase)
-- Do NOT run `git commit`, `git push`, or `gh pr create` unless the user explicitly asks
+**Branch format:** `author/prefix/short-kebab-description` (lowercase)
+
+**The `author` is always `danyal`** — never an AI tool name (`copilot`, `claude`, `cursor`, etc.).
+
+Full workflow:
+1. Ensure a `[T##]` GitHub issue exists (`gh issue create --milestone 26Q2`)
+2. `git checkout main && git pull && git checkout -b danyal/feat/t##-description`
+3. Commit after each logical step with `Refs #nn` in the message
+4. `make type-check && make lint && make test-run && make build` — all must pass
+5. Push and open PR: `gh pr create --title "[T##] ..." --base main`
+6. PR body must include `Closes #nn` or `Refs #nn`
+
+Do NOT run `git commit`, `git push`, or `gh pr create` unless the user explicitly asks.
 
 ## Milestone
 

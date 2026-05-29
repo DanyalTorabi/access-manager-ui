@@ -14,13 +14,13 @@ author/prefix/short-kebab-description
 
 | Part | Rules |
 |------|-------|
-| `author` | Your short identifier (e.g. `danyal`, `danto`) |
-| `prefix` | `feature/`, `fix/`, `docs/`, `chore/` |
-| `description` | Lowercase kebab-case; optionally include ticket id |
+| `author` | Always `danyal` — including when an AI assistant creates the branch. Never use an AI tool name (`copilot`, `claude`, `cursor`, etc.). |
+| `prefix` | `feat/`, `fix/`, `docs/`, `chore/` |
+| `description` | Lowercase kebab-case; include ticket id when one exists |
 
 **Examples:**
 ```
-danyal/feature/t2-project-docs
+danyal/feat/t2-project-docs
 danyal/fix/domain-search-reset
 danyal/docs/frontend-architecture
 danyal/chore/upgrade-tanstack
@@ -28,13 +28,33 @@ danyal/chore/upgrade-tanstack
 
 ## Workflow
 
-1. Sync with main: `git checkout main && git pull origin main`
-2. Create branch: `git checkout -b danyal/feature/t03-docker`
-3. Make changes; run `make type-check && make lint && make build`
-4. Push branch and open PR into `main`
-5. CI must be green before merge
-6. **Squash merge** is the default (keeps main history clean)
-7. Delete the branch after merge
+1. **Create or locate the GitHub issue** — every branch must trace back to a `[T##]` issue on the 26Q2 milestone.
+   ```bash
+   gh issue create --title "[T##] short imperative title" --body "..." --milestone 26Q2
+   ```
+2. **Sync and branch from main:**
+   ```bash
+   git checkout main && git pull origin main
+   git checkout -b danyal/feat/t##-short-description
+   ```
+3. **Make changes** — commit after each logical step; each commit message should reference the ticket:
+   ```
+   feat(t##): implement X
+   fix(t##): resolve Y
+   ```
+4. **Run quality gates before pushing:**
+   ```bash
+   make type-check && make lint && make test-run && make build
+   ```
+5. **Push and open PR:**
+   ```bash
+   git push -u origin danyal/feat/t##-short-description
+   gh pr create --title "[T##] short imperative title" --base main
+   ```
+6. PR body must include a `Closes #nn` or `Refs #nn` ticket link.
+7. CI must be green before merge.
+8. **Squash merge** is the default (keeps main history clean).
+9. Delete the branch after merge.
 
 ## Pull request title
 

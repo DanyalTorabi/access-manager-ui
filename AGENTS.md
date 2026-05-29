@@ -80,12 +80,34 @@ For behavioral changes: add or update a test (when test infrastructure exists). 
 
 ## Commits and PRs (AI assistant defaults)
 
-- Create a topic branch from up-to-date `main` BEFORE making file changes.
-- Branch naming: `author/prefix/short-kebab-description` (all lowercase). See `docs/branching.md`.
+### Branch naming
+
+Format: `author/prefix/short-kebab-description` (all lowercase). See `docs/branching.md`.
+
+**The `author` segment is always `danyal`** — never an AI tool name (`copilot`, `claude`, `cursor`, etc.).
+
+Examples:
+```
+danyal/feat/t6-routing-layout
+danyal/fix/domain-search-reset
+danyal/docs/update-readme
+danyal/chore/upgrade-tanstack
+```
+
+### Full workflow
+
+1. Ensure a GitHub issue exists (`gh issue create --title "[T##] ..." --milestone 26Q2`)
+2. `git checkout main && git pull && git checkout -b danyal/feat/t##-short-description`
+3. Make changes — commit after each logical step with `Refs #nn` in the message
+4. Run `make type-check && make lint && make test-run && make build` — all must pass
+5. `git push -u origin danyal/feat/t##-short-description`
+6. `gh pr create --title "[T##] ..." --base main` — body must include `Closes #nn` or `Refs #nn`
+
+### Guard rails
+
 - Do **NOT** run `git commit`, `git push`, or `gh pr create` unless the user explicitly asks.
-- When asked to create a PR: provide the proposed commit message and PR body; do not push unless told.
+- When asked to prepare a PR: show the proposed commit message and PR body text first.
 - PR title format: `[T##] short imperative title` when a ticket number exists.
-- PR body: include `Fixes #nn` or `Refs #nn` in the Ticket section.
 
 ---
 
