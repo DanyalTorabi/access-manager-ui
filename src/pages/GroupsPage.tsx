@@ -52,7 +52,7 @@ export default function GroupsPage() {
   const groupMap = Object.fromEntries((allGroups?.data ?? []).map((g) => [g.ID, g.Title]))
 
   const columns: ColumnDef<Group>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ParentGroupID',
       header: 'Parent Group',
@@ -102,6 +102,7 @@ export default function GroupsPage() {
         <Button
           onClick={() => {
             setEditingGroup(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -118,7 +119,9 @@ export default function GroupsPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(group) => {
+          updateMutation.reset()
           setEditingGroup(group)
           setDrawerOpen(true)
         }}
@@ -126,7 +129,7 @@ export default function GroupsPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search groups…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer
@@ -166,6 +169,7 @@ export default function GroupsPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

@@ -8,7 +8,7 @@
 
 ## Status
 
-**Implemented.** This file is a retroactive spec documenting what was built.
+**Implemented.** Shipped in `copilot/feat/t7-domain-management`.
 
 ## Problem / motivation
 
@@ -39,6 +39,8 @@ Full domain management: list, search, sort, paginate, create, edit, delete — w
 6. Build `EntityTable`, `EntityDrawer`, `ConfirmDeleteDialog` shared components
 7. Build `DomainsPage` wiring all pieces together
 
+> **Note — column `id` vs `accessorKey`:** When `accessorKey` is PascalCase (e.g. `'Title'`), TanStack Table uses it as the column `id`. This causes `onSortChange` to emit the PascalCase value to the API. Always set an explicit lowercase `id` when the `accessorKey` does not match the API sort parameter (e.g. `{ id: 'title', accessorKey: 'Title' }`).
+
 ## Files / paths
 
 - Created: `src/api/client.ts`, `src/api/schema.ts`, `src/api/types.ts`, `src/api/domains.ts`, `src/hooks/useDomains.ts`, `src/components/EntityTable.tsx`, `src/components/EntityDrawer.tsx`, `src/components/ConfirmDeleteDialog.tsx`, `src/pages/DomainsPage.tsx`
@@ -49,7 +51,10 @@ Full domain management: list, search, sort, paginate, create, edit, delete — w
 - Domains list loads with sort, pagination, and client-side search
 - Create/edit via drawer with React Hook Form + Zod validation
 - Delete via confirmation dialog
+- Sort column `id` matches the API sort parameter (lowercase, case-consistent with `?sort=title`)
+- Test suite passes regardless of `.env.local` base URL setting
 - `make type-check && make lint` pass
+- All 32 tests pass (`npm run test:run`)
 
 ## Out of scope
 

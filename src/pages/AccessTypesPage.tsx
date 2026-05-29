@@ -48,7 +48,7 @@ export default function AccessTypesPage() {
   const deleteMutation = useDeleteAccessType(domainId)
 
   const columns: ColumnDef<AccessType>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'Bit',
       header: 'Bit',
@@ -94,6 +94,7 @@ export default function AccessTypesPage() {
         <Button
           onClick={() => {
             setEditingAccessType(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -110,7 +111,9 @@ export default function AccessTypesPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(at) => {
+          updateMutation.reset()
           setEditingAccessType(at)
           setDrawerOpen(true)
         }}
@@ -118,7 +121,7 @@ export default function AccessTypesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search access types…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer
@@ -152,6 +155,7 @@ export default function AccessTypesPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

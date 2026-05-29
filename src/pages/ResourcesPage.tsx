@@ -45,7 +45,7 @@ export default function ResourcesPage() {
   const deleteMutation = useDeleteResource(domainId)
 
   const columns: ColumnDef<Resource>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',
@@ -82,6 +82,7 @@ export default function ResourcesPage() {
         <Button
           onClick={() => {
             setEditingResource(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -98,7 +99,9 @@ export default function ResourcesPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(resource) => {
+          updateMutation.reset()
           setEditingResource(resource)
           setDrawerOpen(true)
         }}
@@ -106,7 +109,7 @@ export default function ResourcesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search resources…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer
@@ -137,6 +140,7 @@ export default function ResourcesPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

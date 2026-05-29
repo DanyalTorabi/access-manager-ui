@@ -2,8 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { domainsApi } from '@/api/domains'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
-
-const BASE = 'http://127.0.0.1:8080'
+import { TEST_API_BASE as BASE } from '@/test/constants'
 
 describe('domainsApi', () => {
   it('list returns data and meta', async () => {

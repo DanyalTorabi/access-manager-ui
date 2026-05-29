@@ -45,7 +45,7 @@ export default function UsersPage() {
   const deleteMutation = useDeleteUser(domainId)
 
   const columns: ColumnDef<User>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',
@@ -82,6 +82,7 @@ export default function UsersPage() {
         <Button
           onClick={() => {
             setEditingUser(null)
+            createMutation.reset()
             setDrawerOpen(true)
           }}
         >
@@ -98,7 +99,9 @@ export default function UsersPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(user) => {
+          updateMutation.reset()
           setEditingUser(user)
           setDrawerOpen(true)
         }}
@@ -106,7 +109,7 @@ export default function UsersPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search users…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer
@@ -137,6 +140,7 @@ export default function UsersPage() {
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ''}
         isPending={deleteMutation.isPending}
+        error={deleteMutation.error?.message}
         onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })

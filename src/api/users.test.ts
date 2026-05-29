@@ -2,8 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { usersApi } from '@/api/users'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
-
-const BASE = 'http://127.0.0.1:8080'
+import { TEST_API_BASE as BASE } from '@/test/constants'
 const DOMAIN_ID = 'dom-1'
 
 describe('usersApi', () => {

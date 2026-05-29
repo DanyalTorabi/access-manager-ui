@@ -45,7 +45,7 @@ export default function DomainsPage() {
   const deleteMutation = useDeleteDomain()
 
   const columns: ColumnDef<Domain>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',
@@ -87,10 +87,12 @@ export default function DomainsPage() {
   ]
 
   const openCreate = () => {
+    createMutation.reset()
     setEditingDomain(null)
     setDrawerOpen(true)
   }
   const openEdit = (domain: Domain) => {
+    updateMutation.reset()
     setEditingDomain(domain)
     setDrawerOpen(true)
   }
@@ -111,9 +113,10 @@ export default function DomainsPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={openEdit}
         onSortChange={(s, o) => { setSort(s); setOrder(o) }}
-        searchPlaceholder="Search domains…"
+        searchPlaceholder="Filter this page…"
       />
 
       <p className="text-xs text-muted-foreground">
@@ -147,8 +150,7 @@ export default function DomainsPage() {
       <ConfirmDeleteDialog
         open={!!deleteTarget}
         entityName={deleteTarget?.Title ?? ""}
-        isPending={deleteMutation.isPending}
-        onConfirm={() => {
+        isPending={deleteMutation.isPending}        error={deleteMutation.error?.message}        onConfirm={() => {
           if (deleteTarget) {
             deleteMutation.mutate(deleteTarget.ID, { onSuccess: () => setDeleteTarget(null) })
           }

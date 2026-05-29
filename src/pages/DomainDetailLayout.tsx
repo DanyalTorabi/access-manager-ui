@@ -1,16 +1,11 @@
 import { Outlet, useParams } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { domainsApi, domainQueryKey } from '@/api/domains'
+import { useDomainQuery } from '@/hooks/useDomains'
 
 export default function DomainDetailLayout() {
   const { domainId } = useParams({ from: '/domains/$domainId' })
 
-  // Prefetch domain — result is available in Sidebar via cached query
-  useQuery({
-    queryKey: domainQueryKey(domainId),
-    queryFn: () => domainsApi.get(domainId),
-    staleTime: 60_000,
-  })
+  // Prefetch domain — result available in Sidebar via shared query cache
+  useDomainQuery(domainId)
 
   return <Outlet />
 }

@@ -1,6 +1,5 @@
 import { http, HttpResponse } from 'msw'
-
-const BASE = 'http://127.0.0.1:8080'
+import { TEST_API_BASE as BASE } from './constants'
 
 const listMeta = (total: number) => ({
   total,
