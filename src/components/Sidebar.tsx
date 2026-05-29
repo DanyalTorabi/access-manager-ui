@@ -1,7 +1,6 @@
 import { Globe, Users, Layers, Package, Key, ShieldCheck, ChevronLeft } from 'lucide-react'
-import { Link, useRouterState } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { domainsApi, domainQueryKey } from '@/api/domains'
+import { Link, useRouterState, useParams } from '@tanstack/react-router'
+import { useDomainQuery } from '@/hooks/useDomains'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -20,21 +19,11 @@ const domainSubItems = [
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  // Use router-aware param extraction instead of regex URL parsing.
+  // Returns {} (domainId: undefined) when not on a domain-scoped route.
+  const { domainId: activeDomainId } = useParams({ strict: false }) as { domainId?: string }
 
-  // Derive activeDomainId from the router's own match list rather than
-  // regex-parsing the raw pathname — more robust if the route path changes.
-  const activeDomainId = useRouterState({
-    select: (s) =>
-      (s.matches.find((m) => m.routeId === '/domains/$domainId')?.params as { domainId?: string })
-        ?.domainId,
-  })
-
-  const { data: domain } = useQuery({
-    queryKey: domainQueryKey(activeDomainId ?? ''),
-    queryFn: () => domainsApi.get(activeDomainId!),
-    enabled: !!activeDomainId,
-    staleTime: 60_000,
-  })
+  const { data: domain } = useDomainQuery(activeDomainId ?? '')
 
   return (
     <aside className="flex h-screen w-56 flex-col border-r border-border bg-background">
