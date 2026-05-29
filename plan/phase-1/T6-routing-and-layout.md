@@ -8,7 +8,7 @@
 
 ## Status
 
-**Done.**
+**Done.** This file is a retroactive spec — the implementation was committed as part of an omnibus PR before individual ticket branches were established.
 
 ## Problem / motivation
 
@@ -20,8 +20,8 @@ Establish the full application shell: router, persistent sidebar, domain-scoped 
 
 ## Deliverables
 
-- `src/router.tsx` — TanStack Router with routes: `/`, `/domains`, `/domains/:id/users`, `/domains/:id/groups`, `/domains/:id/resources`, `/domains/:id/access-types`, `/domains/:id/permissions`
-- `src/main.tsx` — `QueryClientProvider` → `ThemeProvider` → `RouterProvider` provider stack; `RootLayout` with `<Sidebar>` + `<Outlet>`
+- `src/router.tsx` — TanStack Router with routes: `/`, `/domains`, `/domains/:id/users`, `/domains/:id/groups`, `/domains/:id/resources`, `/domains/:id/access-types`, `/domains/:id/permissions`; `RootLayout` component (`<Sidebar>` + `<Outlet>`)
+- `src/main.tsx` — `QueryClientProvider` → `ThemeProvider` → `RouterProvider` provider stack
 - `src/pages/DomainDetailLayout.tsx` — layout wrapper that prefetches the domain record and renders sub-nav in the sidebar
 - `src/components/Sidebar.tsx` — fixed left sidebar (w-56); top-level "Domains" link; domain sub-nav (← All Domains, Users, Groups, Resources, Access Types, Permissions); dark-mode toggle in footer
 - `src/components/ThemeProvider.tsx` and `src/components/ThemeToggle.tsx` — `localStorage`-persisted theme
