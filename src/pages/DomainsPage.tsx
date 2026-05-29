@@ -45,7 +45,7 @@ export default function DomainsPage() {
   const deleteMutation = useDeleteDomain()
 
   const columns: ColumnDef<Domain>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',
