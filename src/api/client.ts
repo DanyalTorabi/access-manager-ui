@@ -1,5 +1,3 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8080'
-
 function getAuthHeader(): Record<string, string> {
   const token = import.meta.env.VITE_API_BEARER_TOKEN
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -16,10 +14,11 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8080'
+  const res = await fetch(`${base}${path}`, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      ...(init?.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...getAuthHeader(),
       ...init?.headers,
     },
