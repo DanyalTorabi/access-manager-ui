@@ -96,7 +96,29 @@ When reviewing a PR diff:
 
 ## Git policy for AI assistants
 
-- Create topic branch from `main` BEFORE making file changes
-- Branch format: `author/prefix/short-kebab-description` (lowercase)
+### Branch naming
+
+Format: `author/prefix/short-kebab-description` (lowercase). See `docs/branching.md`.
+
+**The `author` segment is always `danyal`** — never an AI tool name such as `copilot`, `claude`, or `cursor`.
+
+Examples:
+```
+danyal/feat/t6-routing-layout
+danyal/fix/sidebar-active-state
+danyal/chore/bump-deps
+```
+
+### Full workflow
+
+1. Ensure a `[T##]` GitHub issue exists — create one with `gh issue create --milestone 26Q2` if missing
+2. `git checkout main && git pull && git checkout -b danyal/feat/t##-description`
+3. Commit after each logical step; reference the issue in the message (`Refs #nn`)
+4. `make type-check && make lint && make test-run && make build` — all must pass
+5. `git push -u origin danyal/feat/t##-description`
+6. `gh pr create --title "[T##] ..." --base main` — body must include `Closes #nn` or `Refs #nn`
+
+### Guard rails
+
 - Do NOT run `git commit`, `git push`, or `gh pr create` unless explicitly asked
 - Provide proposed commit message and PR body as text for the user to review first
