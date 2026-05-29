@@ -6,8 +6,7 @@ import { createElement } from 'react'
 import { useDomainsQuery, useCreateDomain, useDeleteDomain } from '@/hooks/useDomains'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
-
-const BASE = 'http://127.0.0.1:8080'
+import { TEST_API_BASE as BASE } from '@/test/constants'
 
 function makeWrapper() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
