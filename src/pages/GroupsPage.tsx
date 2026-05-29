@@ -118,6 +118,7 @@ export default function GroupsPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(group) => {
           setEditingGroup(group)
           setDrawerOpen(true)
@@ -126,7 +127,7 @@ export default function GroupsPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search groups…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer

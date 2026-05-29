@@ -98,6 +98,7 @@ export default function ResourcesPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(resource) => {
           setEditingResource(resource)
           setDrawerOpen(true)
@@ -106,7 +107,7 @@ export default function ResourcesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search resources…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer

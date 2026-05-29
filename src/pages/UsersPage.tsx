@@ -98,6 +98,7 @@ export default function UsersPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(user) => {
           setEditingUser(user)
           setDrawerOpen(true)
@@ -106,7 +107,7 @@ export default function UsersPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search users…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer

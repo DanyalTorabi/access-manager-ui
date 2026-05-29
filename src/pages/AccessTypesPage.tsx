@@ -110,6 +110,7 @@ export default function AccessTypesPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(at) => {
           setEditingAccessType(at)
           setDrawerOpen(true)
@@ -118,7 +119,7 @@ export default function AccessTypesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search access types…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer

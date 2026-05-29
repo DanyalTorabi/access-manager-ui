@@ -125,6 +125,7 @@ export default function PermissionsPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={(perm) => {
           setEditingPermission(perm)
           setDrawerOpen(true)
@@ -133,7 +134,7 @@ export default function PermissionsPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Search permissions…"
+        searchPlaceholder="Filter this page…"
       />
 
       <EntityDrawer

@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const PAGE_SIZE = 20
+const DEFAULT_PAGE_SIZE = 20
 
 interface EntityTableProps<TData> {
   columns: ColumnDef<TData>[]
@@ -28,7 +28,13 @@ interface EntityTableProps<TData> {
   total: number
   offset: number
   onOffsetChange: (offset: number) => void
+  /** Must match the limit passed to the query. Defaults to 20. */
+  pageSize?: number
   searchPlaceholder?: string
+  /** Optional controlled search value (for server-side search in T11).
+   *  When omitted, the component manages its own internal filter state. */
+  searchValue?: string
+  onSearchChange?: (value: string) => void
 }
 
 export function EntityTable<TData>({
@@ -42,14 +48,23 @@ export function EntityTable<TData>({
   total,
   offset,
   onOffsetChange,
-  searchPlaceholder = 'Search…',
+  pageSize = DEFAULT_PAGE_SIZE,
+  searchPlaceholder = 'Filter this page…',
+  searchValue: controlledSearch,
+  onSearchChange: onControlledSearchChange,
 }: EntityTableProps<TData>) {
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [internalFilter, setInternalFilter] = useState('')
+  const globalFilter = controlledSearch ?? internalFilter
+  const setGlobalFilter = onControlledSearchChange ?? setInternalFilter
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
     data,
     columns,
+    // manualSorting: true tells TanStack Table the server owns sort order;
+    // getSortedRowModel still wires up the header toggle UI but does not
+    // re-sort the already-sorted rows returned from the server.
+    manualSorting: true,
     state: { globalFilter, sorting },
     onGlobalFilterChange: setGlobalFilter,
     onSortingChange: (updater) => {
@@ -58,17 +73,17 @@ export function EntityTable<TData>({
       const first = next[0]
       if (first && onSortChange) {
         onSortChange(first.id, first.desc ? 'desc' : 'asc')
-      } else if (!first && onSortChange) {
-        onSortChange('title', 'asc')
       }
+      // When all sorting is cleared, emit nothing — the caller's own default
+      // sort state remains in effect and the server applies its default order.
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   })
 
-  const totalPages = Math.ceil(total / PAGE_SIZE)
-  const currentPage = Math.floor(offset / PAGE_SIZE) + 1
+  const totalPages = Math.ceil(total / pageSize)
+  const currentPage = Math.floor(offset / pageSize) + 1
 
   return (
     <div className="space-y-3">
@@ -152,7 +167,7 @@ export function EntityTable<TData>({
             variant="outline"
             size="sm"
             disabled={currentPage === 1}
-            onClick={() => onOffsetChange(offset - PAGE_SIZE)}
+            onClick={() => onOffsetChange(offset - pageSize)}
           >
             Previous
           </Button>
@@ -163,7 +178,7 @@ export function EntityTable<TData>({
             variant="outline"
             size="sm"
             disabled={currentPage === totalPages}
-            onClick={() => onOffsetChange(offset + PAGE_SIZE)}
+            onClick={() => onOffsetChange(offset + pageSize)}
           >
             Next
           </Button>

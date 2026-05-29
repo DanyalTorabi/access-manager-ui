@@ -111,9 +111,10 @@ export default function DomainsPage() {
         total={data?.meta.total ?? 0}
         offset={offset}
         onOffsetChange={setOffset}
+        pageSize={PAGE_SIZE}
         onRowDoubleClick={openEdit}
         onSortChange={(s, o) => { setSort(s); setOrder(o) }}
-        searchPlaceholder="Search domains…"
+        searchPlaceholder="Filter this page…"
       />
 
       <p className="text-xs text-muted-foreground">
