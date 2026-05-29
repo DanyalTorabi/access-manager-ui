@@ -2,7 +2,6 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
-  Outlet,
   redirect,
 } from '@tanstack/react-router'
 import DomainsPage from '@/pages/DomainsPage'
@@ -12,22 +11,11 @@ import GroupsPage from '@/pages/GroupsPage'
 import ResourcesPage from '@/pages/ResourcesPage'
 import AccessTypesPage from '@/pages/AccessTypesPage'
 import PermissionsPage from '@/pages/PermissionsPage'
-import { Sidebar } from '@/components/Sidebar'
+import { RootLayout } from '@/components/RootLayout'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
 })
-
-function RootLayout() {
-  return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto p-8">
-        <Outlet />
-      </main>
-    </div>
-  )
-}
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,

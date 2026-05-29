@@ -1,6 +1,9 @@
 import { api } from './client'
 import type { Domain, ListParams, ListResponse } from './types'
 
+/** Shared query key for a single domain — used by DomainDetailLayout (prefetch) and Sidebar (read). */
+export const domainQueryKey = (id: string) => ['domains', id] as const
+
 function buildQuery(params: ListParams): string {
   const q = new URLSearchParams()
   if (params.offset !== undefined) q.set('offset', String(params.offset))

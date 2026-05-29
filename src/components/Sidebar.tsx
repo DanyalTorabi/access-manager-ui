@@ -1,7 +1,7 @@
 import { Globe, Users, Layers, Package, Key, ShieldCheck, ChevronLeft } from 'lucide-react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { domainsApi } from '@/api/domains'
+import { domainsApi, domainQueryKey } from '@/api/domains'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -11,20 +11,26 @@ const topNavItems = [
 ]
 
 const domainSubItems = [
-  { path: 'users', label: 'Users', icon: Users },
-  { path: 'groups', label: 'Groups', icon: Layers },
-  { path: 'resources', label: 'Resources', icon: Package },
-  { path: 'access-types', label: 'Access Types', icon: Key },
-  { path: 'permissions', label: 'Permissions', icon: ShieldCheck },
-] as const
+  { path: 'users' as const, label: 'Users', icon: Users, to: '/domains/$domainId/users' as const },
+  { path: 'groups' as const, label: 'Groups', icon: Layers, to: '/domains/$domainId/groups' as const },
+  { path: 'resources' as const, label: 'Resources', icon: Package, to: '/domains/$domainId/resources' as const },
+  { path: 'access-types' as const, label: 'Access Types', icon: Key, to: '/domains/$domainId/access-types' as const },
+  { path: 'permissions' as const, label: 'Permissions', icon: ShieldCheck, to: '/domains/$domainId/permissions' as const },
+]
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const domainMatch = /^\/domains\/([^/]+)/.exec(pathname)
-  const activeDomainId = domainMatch?.[1]
+
+  // Derive activeDomainId from the router's own match list rather than
+  // regex-parsing the raw pathname — more robust if the route path changes.
+  const activeDomainId = useRouterState({
+    select: (s) =>
+      (s.matches.find((m) => m.routeId === '/domains/$domainId')?.params as { domainId?: string })
+        ?.domainId,
+  })
 
   const { data: domain } = useQuery({
-    queryKey: ['domains', activeDomainId],
+    queryKey: domainQueryKey(activeDomainId ?? ''),
     queryFn: () => domainsApi.get(activeDomainId!),
     enabled: !!activeDomainId,
     staleTime: 60_000,
@@ -77,14 +83,14 @@ export function Sidebar() {
               </p>
             </div>
             <Separator className="my-1" />
-            {domainSubItems.map(({ path, label, icon: Icon }) => {
-              const to = `/domains/${activeDomainId}/${path}`
-              const isActive = pathname === to || pathname.startsWith(to + '/')
+            {domainSubItems.map(({ path, label, icon: Icon, to }) => {
+              const resolvedPath = `/domains/${activeDomainId}/${path}`
+              const isActive = pathname === resolvedPath || pathname.startsWith(resolvedPath + '/')
               return (
                 <Link
                   key={path}
-                  to={to as '/domains/$domainId/users'}
-                  params={{ domainId: activeDomainId }}
+                  to={to}
+                  params={{ domainId: activeDomainId! }}
                   className={cn(
                     'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
                     isActive
