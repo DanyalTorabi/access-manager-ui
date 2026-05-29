@@ -45,7 +45,7 @@ export default function UsersPage() {
   const deleteMutation = useDeleteUser(domainId)
 
   const columns: ColumnDef<User>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',

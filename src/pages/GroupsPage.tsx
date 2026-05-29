@@ -52,7 +52,7 @@ export default function GroupsPage() {
   const groupMap = Object.fromEntries((allGroups?.data ?? []).map((g) => [g.ID, g.Title]))
 
   const columns: ColumnDef<Group>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ParentGroupID',
       header: 'Parent Group',

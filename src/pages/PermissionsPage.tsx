@@ -54,7 +54,7 @@ export default function PermissionsPage() {
   const deleteMutation = useDeletePermission(domainId)
 
   const columns: ColumnDef<Permission>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ResourceID',
       header: 'Resource',

@@ -45,7 +45,7 @@ export default function ResourcesPage() {
   const deleteMutation = useDeleteResource(domainId)
 
   const columns: ColumnDef<Resource>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'ID',
       header: 'ID',

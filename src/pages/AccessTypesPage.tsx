@@ -48,7 +48,7 @@ export default function AccessTypesPage() {
   const deleteMutation = useDeleteAccessType(domainId)
 
   const columns: ColumnDef<AccessType>[] = [
-    { accessorKey: 'Title', header: 'Title', enableSorting: true },
+    { id: 'title', accessorKey: 'Title', header: 'Title', enableSorting: true },
     {
       accessorKey: 'Bit',
       header: 'Bit',
