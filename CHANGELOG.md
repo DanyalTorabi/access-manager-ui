@@ -44,7 +44,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 - **T5** — `.github/ISSUE_TEMPLATE/task.md`
 - **T5** — `.github/ISSUE_TEMPLATE/config.yml`
 - **Phase 0 bootstrap** — Vite 5 + React 18 + TypeScript strict + TanStack Router/Query/Table + shadcn/ui + Tailwind CSS + React Hook Form + Zod
-- Auto-generated `src/api/schema.ts` from backend OpenAPI spec; typed API client; Domains CRUD page
 - **T7** — Domains full CRUD: `EntityTable` (TanStack Table, sort, client-side search, pagination), `EntityDrawer` (Sheet-based create/edit), `ConfirmDeleteDialog`; `api/client.ts` fetch wrapper with auth header and 204 handling; `api/domains.ts` typed API module; `hooks/useDomains.ts` TanStack Query wrappers; `DomainsPage` wired with React Hook Form + Zod validation
 
 ### Fixed
