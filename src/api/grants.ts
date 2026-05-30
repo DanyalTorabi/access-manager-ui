@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { UserAuthzResource, GroupAuthzResource } from './types'
+import type { UserAuthzResource, GroupAuthzResource, ListResponse } from './types'
 
 export const grantsApi = {
   addUserToGroup: (domainId: string, userId: string, groupId: string) =>
@@ -34,12 +34,12 @@ export const grantsApi = {
     ),
 
   getUserAuthzResources: (domainId: string, userId: string) =>
-    api.get<{ data: UserAuthzResource[] }>(
-      `/api/v1/domains/${domainId}/users/${userId}/authz/resources`,
+    api.get<ListResponse<UserAuthzResource>>(
+      `/api/v1/domains/${domainId}/users/${userId}/authz/resources?limit=100`,
     ),
 
   getGroupAuthzResources: (domainId: string, groupId: string) =>
-    api.get<{ data: GroupAuthzResource[] }>(
-      `/api/v1/domains/${domainId}/groups/${groupId}/authz/resources`,
+    api.get<ListResponse<GroupAuthzResource>>(
+      `/api/v1/domains/${domainId}/groups/${groupId}/authz/resources?limit=100`,
     ),
 }

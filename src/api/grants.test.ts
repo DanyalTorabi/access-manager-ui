@@ -64,20 +64,22 @@ describe('grantsApi', () => {
   })
 
   describe('getUserAuthzResources', () => {
-    it('returns resource list with effective_mask', async () => {
+    it('returns resource list with effective_mask and meta', async () => {
       const result = await grantsApi.getUserAuthzResources(DOMAIN_ID, USER_ID)
       expect(result.data).toHaveLength(1)
       expect(result.data[0].resource_id).toBe('r1')
       expect(result.data[0].effective_mask).toBe('1')
+      expect(result.meta.total).toBe(1)
     })
   })
 
   describe('getGroupAuthzResources', () => {
-    it('returns resource list with mask', async () => {
+    it('returns resource list with mask and meta', async () => {
       const result = await grantsApi.getGroupAuthzResources(DOMAIN_ID, GROUP_ID)
       expect(result.data).toHaveLength(1)
       expect(result.data[0].resource_id).toBe('r1')
       expect(result.data[0].mask).toBe('1')
+      expect(result.meta.total).toBe(1)
     })
   })
 })

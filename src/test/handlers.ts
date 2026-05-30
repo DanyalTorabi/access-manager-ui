@@ -231,6 +231,7 @@ export const handlers = [
   http.get(`${BASE}/api/v1/domains/:domainId/users/:userId/authz/resources`, () =>
     HttpResponse.json({
       data: [{ resource_id: 'r1', effective_mask: '1' }],
+      meta: { total: 1, offset: 0, limit: 100, sort: 'resource_id', order: 'asc' },
     }),
   ),
 
@@ -238,6 +239,7 @@ export const handlers = [
   http.get(`${BASE}/api/v1/domains/:domainId/groups/:groupId/authz/resources`, () =>
     HttpResponse.json({
       data: [{ resource_id: 'r1', mask: '1' }],
+      meta: { total: 1, offset: 0, limit: 100, sort: 'resource_id', order: 'asc' },
     }),
   ),
 ]

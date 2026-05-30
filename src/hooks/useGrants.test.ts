@@ -90,12 +90,13 @@ describe('useRevokePermissionFromGroup', () => {
 })
 
 describe('useUserAuthzResources', () => {
-  it('returns resource list with effective_mask', async () => {
+  it('returns resource list with effective_mask and meta', async () => {
     const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useUserAuthzResources(DOMAIN_ID, USER_ID), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.data[0].resource_id).toBe('r1')
     expect(result.current.data?.data[0].effective_mask).toBe('1')
+    expect(result.current.data?.meta.total).toBe(1)
   })
 
   it('is disabled when userId is empty', () => {
@@ -107,12 +108,13 @@ describe('useUserAuthzResources', () => {
 })
 
 describe('useGroupAuthzResources', () => {
-  it('returns resource list with mask', async () => {
+  it('returns resource list with mask and meta', async () => {
     const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useGroupAuthzResources(DOMAIN_ID, GROUP_ID), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.data[0].resource_id).toBe('r1')
     expect(result.current.data?.data[0].mask).toBe('1')
+    expect(result.current.data?.meta.total).toBe(1)
   })
 
   it('is disabled when groupId is empty', () => {
