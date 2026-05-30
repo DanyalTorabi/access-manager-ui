@@ -32,6 +32,7 @@ export default function AccessTypesPage() {
   const [offset, setOffset] = useState(0)
   const [sort, setSort] = useState('title')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [search, setSearch] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingAccessType, setEditingAccessType] = useState<AccessType | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<AccessType | null>(null)
@@ -41,6 +42,7 @@ export default function AccessTypesPage() {
     limit: PAGE_SIZE,
     sort,
     order,
+    search,
   })
 
   const createMutation = useCreateAccessType(domainId)
@@ -121,7 +123,8 @@ export default function AccessTypesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Filter this page…"
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setOffset(0) }}
       />
 
       <EntityDrawer

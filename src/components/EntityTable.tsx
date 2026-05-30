@@ -2,18 +2,18 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getFilteredRowModel,
   flexRender,
   type ColumnDef,
   type SortingState,
 } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const DEFAULT_PAGE_SIZE = 20
+const SEARCH_DEBOUNCE_MS = 300
 
 interface EntityTableProps<TData> {
   columns: ColumnDef<TData>[]
@@ -31,10 +31,9 @@ interface EntityTableProps<TData> {
   /** Must match the limit passed to the query. Defaults to 20. */
   pageSize?: number
   searchPlaceholder?: string
-  /** Optional controlled search value (for server-side search in T11).
-   *  When omitted, the component manages its own internal filter state. */
-  searchValue?: string
-  onSearchChange?: (value: string) => void
+  /** Controlled search value driven by the parent. */
+  search: string
+  onSearchChange: (value: string) => void
 }
 
 export function EntityTable<TData>({
@@ -49,13 +48,37 @@ export function EntityTable<TData>({
   offset,
   onOffsetChange,
   pageSize = DEFAULT_PAGE_SIZE,
-  searchPlaceholder = 'Filter this page…',
-  searchValue: controlledSearch,
-  onSearchChange: onControlledSearchChange,
+  searchPlaceholder = 'Search…',
+  search,
+  onSearchChange,
 }: EntityTableProps<TData>) {
-  const [internalFilter, setInternalFilter] = useState('')
-  const globalFilter = controlledSearch ?? internalFilter
-  const setGlobalFilter = onControlledSearchChange ?? setInternalFilter
+  const [inputValue, setInputValue] = useState(search)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Always call the latest onSearchChange prop from inside the debounce timer
+  const onSearchChangeRef = useRef(onSearchChange)
+  useEffect(() => { onSearchChangeRef.current = onSearchChange })
+
+  // Cancel any pending debounce and sync inputValue when parent resets search externally
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    setInputValue(search)
+  }, [search])
+
+  // Cancel pending debounce on unmount to avoid calling stale callbacks
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [])
+
+  function handleInputChange(value: string) {
+    setInputValue(value)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      onSearchChangeRef.current(value)
+    }, SEARCH_DEBOUNCE_MS)
+  }
+
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
@@ -65,8 +88,7 @@ export function EntityTable<TData>({
     // getSortedRowModel still wires up the header toggle UI but does not
     // re-sort the already-sorted rows returned from the server.
     manualSorting: true,
-    state: { globalFilter, sorting },
-    onGlobalFilterChange: setGlobalFilter,
+    state: { sorting },
     onSortingChange: (updater) => {
       const next = typeof updater === 'function' ? updater(sorting) : updater
       setSorting(next)
@@ -79,7 +101,6 @@ export function EntityTable<TData>({
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   })
 
   const totalPages = Math.ceil(total / pageSize)
@@ -90,8 +111,8 @@ export function EntityTable<TData>({
       <Input
         type="search"
         placeholder={searchPlaceholder}
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
+        value={inputValue}
+        onChange={(e) => handleInputChange(e.target.value)}
         className="max-w-sm"
       />
 

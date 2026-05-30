@@ -29,6 +29,7 @@ export default function UsersPage() {
   const [offset, setOffset] = useState(0)
   const [sort, setSort] = useState('title')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [search, setSearch] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null)
@@ -38,6 +39,7 @@ export default function UsersPage() {
     limit: PAGE_SIZE,
     sort,
     order,
+    search,
   })
 
   const createMutation = useCreateUser(domainId)
@@ -109,7 +111,8 @@ export default function UsersPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Filter this page…"
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setOffset(0) }}
       />
 
       <EntityDrawer

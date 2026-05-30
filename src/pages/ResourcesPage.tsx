@@ -29,6 +29,7 @@ export default function ResourcesPage() {
   const [offset, setOffset] = useState(0)
   const [sort, setSort] = useState('title')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [search, setSearch] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingResource, setEditingResource] = useState<Resource | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Resource | null>(null)
@@ -38,6 +39,7 @@ export default function ResourcesPage() {
     limit: PAGE_SIZE,
     sort,
     order,
+    search,
   })
 
   const createMutation = useCreateResource(domainId)
@@ -109,7 +111,8 @@ export default function ResourcesPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Filter this page…"
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setOffset(0) }}
       />
 
       <EntityDrawer
