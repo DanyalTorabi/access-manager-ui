@@ -196,4 +196,50 @@ export const handlers = [
     `${BASE}/api/v1/domains/:domainId/permissions/:id`,
     () => new HttpResponse(null, { status: 204 }),
   ),
+
+  // Grants — user-group membership
+  http.post(
+    `${BASE}/api/v1/domains/:domainId/users/:userId/groups/:groupId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+  http.delete(
+    `${BASE}/api/v1/domains/:domainId/users/:userId/groups/:groupId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+
+  // Grants — user-permission
+  http.post(
+    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permissionId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+  http.delete(
+    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permissionId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+
+  // Grants — group-permission
+  http.post(
+    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permissionId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+  http.delete(
+    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permissionId`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
+
+  // Authz — user effective access resources
+  http.get(`${BASE}/api/v1/domains/:domainId/users/:userId/authz/resources`, () =>
+    HttpResponse.json({
+      data: [{ resource_id: 'r1', effective_mask: '1' }],
+      meta: { total: 1, offset: 0, limit: 100, sort: 'resource_id', order: 'asc' },
+    }),
+  ),
+
+  // Authz — group access resources
+  http.get(`${BASE}/api/v1/domains/:domainId/groups/:groupId/authz/resources`, () =>
+    HttpResponse.json({
+      data: [{ resource_id: 'r1', mask: '1' }],
+      meta: { total: 1, offset: 0, limit: 100, sort: 'resource_id', order: 'asc' },
+    }),
+  ),
 ]

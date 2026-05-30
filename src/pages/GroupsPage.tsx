@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+import { KeyRound, Trash2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -9,6 +9,7 @@ import type { Group } from '@/api/types'
 import { EntityTable } from '@/components/EntityTable'
 import { EntityDrawer } from '@/components/EntityDrawer'
 import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
+import { GroupPermissionsPanel } from '@/components/GroupPermissionsPanel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -36,6 +37,7 @@ export default function GroupsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingGroup, setEditingGroup] = useState<Group | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Group | null>(null)
+  const [accessPanelGroup, setAccessPanelGroup] = useState<Group | null>(null)
 
   const { data, isLoading, isError } = useGroupsQuery(domainId, {
     offset,
@@ -80,7 +82,18 @@ export default function GroupsPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation()
+              setAccessPanelGroup(row.original)
+            }}
+            aria-label="Manage permissions"
+          >
+            <KeyRound className="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -180,6 +193,15 @@ export default function GroupsPage() {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      {accessPanelGroup && (
+        <GroupPermissionsPanel
+          key={accessPanelGroup.ID}
+          domainId={domainId}
+          group={accessPanelGroup}
+          onClose={() => setAccessPanelGroup(null)}
+        />
+      )}
     </div>
   )
 }

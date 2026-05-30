@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+import { KeyRound, Trash2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -9,6 +9,7 @@ import type { User } from '@/api/types'
 import { EntityTable } from '@/components/EntityTable'
 import { EntityDrawer } from '@/components/EntityDrawer'
 import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
+import { UserAccessPanel } from '@/components/UserAccessPanel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,6 +34,7 @@ export default function UsersPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null)
+  const [accessPanelUser, setAccessPanelUser] = useState<User | null>(null)
 
   const { data, isLoading, isError } = useUsersQuery(domainId, {
     offset,
@@ -60,7 +62,18 @@ export default function UsersPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation()
+              setAccessPanelUser(row.original)
+            }}
+            aria-label="Manage access"
+          >
+            <KeyRound className="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -151,6 +164,15 @@ export default function UsersPage() {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      {accessPanelUser && (
+        <UserAccessPanel
+          key={accessPanelUser.ID}
+          domainId={domainId}
+          user={accessPanelUser}
+          onClose={() => setAccessPanelUser(null)}
+        />
+      )}
     </div>
   )
 }

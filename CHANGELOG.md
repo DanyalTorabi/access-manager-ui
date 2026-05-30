@@ -8,6 +8,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ## [Unreleased]
 
+### Added
+
+- **Grant Management** — "Manage Access" button (key icon) per user row opens a side panel to add/remove the user from groups, grant/revoke permissions directly, and view an effective-access table (resources × access type names, decoded from the authorization mask)
+- **Grant Management** — "Manage Permissions" button (key icon) per group row opens a side panel to grant/revoke permissions to the group and view the group's access summary table
+
 ### Changed
 
 - **Search** — Search box on all entity pages now queries the full dataset via the backend `?search=` parameter instead of filtering the current page only; pagination resets to page 1 on each new search

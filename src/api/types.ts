@@ -6,6 +6,8 @@ export type Group = components['schemas']['Group']
 export type Resource = components['schemas']['Resource']
 export type AccessType = components['schemas']['AccessType']
 export type Permission = components['schemas']['Permission']
+export type UserAuthzResource = components['schemas']['UserAuthzResource']
+export type GroupAuthzResource = components['schemas']['GroupAuthzResource']
 export type ListMeta = components['schemas']['ListMeta']
 export type ErrorBody = components['schemas']['ErrorBody']
 
