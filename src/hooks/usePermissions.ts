@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function usePermissionsQuery(domainId: string, params: ListParams = {}) {
   return useQuery({
-    queryKey: ['permissions', domainId, params.offset ?? 0, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['permissions', domainId, params.offset, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => permissionsApi.list(domainId, params),
     enabled: !!domainId,
   })
