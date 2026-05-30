@@ -165,11 +165,14 @@ export default function UsersPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      <UserAccessPanel
-        domainId={domainId}
-        user={accessPanelUser}
-        onClose={() => setAccessPanelUser(null)}
-      />
+      {accessPanelUser && (
+        <UserAccessPanel
+          key={accessPanelUser.ID}
+          domainId={domainId}
+          user={accessPanelUser}
+          onClose={() => setAccessPanelUser(null)}
+        />
+      )}
     </div>
   )
 }

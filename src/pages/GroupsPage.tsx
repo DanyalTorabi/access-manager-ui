@@ -194,11 +194,14 @@ export default function GroupsPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      <GroupPermissionsPanel
-        domainId={domainId}
-        group={accessPanelGroup}
-        onClose={() => setAccessPanelGroup(null)}
-      />
+      {accessPanelGroup && (
+        <GroupPermissionsPanel
+          key={accessPanelGroup.ID}
+          domainId={domainId}
+          group={accessPanelGroup}
+          onClose={() => setAccessPanelGroup(null)}
+        />
+      )}
     </div>
   )
 }
