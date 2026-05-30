@@ -35,6 +35,23 @@ describe('useAccessTypesQuery', () => {
     const { result } = renderHook(() => useAccessTypesQuery(DOMAIN_ID), { wrapper })
     await waitFor(() => expect(result.current.isError).toBe(true))
   })
+
+  it('passes params to queryFn — offset and limit forwarded', async () => {
+    const { result } = renderHook(
+      () => useAccessTypesQuery(DOMAIN_ID, { offset: 20, limit: 10 }),
+      { wrapper },
+    )
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  })
+
+  it('uses separate cache entries for different limit values', async () => {
+    const { wrapper: w, queryClient } = makeQueryWrapper()
+    renderHook(() => useAccessTypesQuery(DOMAIN_ID, { limit: 10 }), { wrapper: w })
+    renderHook(() => useAccessTypesQuery(DOMAIN_ID, { limit: 20 }), { wrapper: w })
+    await waitFor(() =>
+      expect(queryClient.getQueriesData({ queryKey: ['access-types'] })).toHaveLength(2),
+    )
+  })
 })
 
 describe('useCreateAccessType', () => {
