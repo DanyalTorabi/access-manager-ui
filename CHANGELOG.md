@@ -10,6 +10,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Added
 
+- **UI** — Domain Overview page at `/domains/:id` with stat cards for Users, Groups, Resources, Access Types, and Permissions; each card shows the total count and links to the corresponding sub-page
+- **UI** — Sidebar gains an "Overview" entry as the first domain sub-nav link
 - **Tests** — `src/api/permissions.test.ts`: full CRUD coverage with body spy for `title`/`resource_id`/`access_mask`, ApiError propagation, and query-param forwarding
 - **Tests** — `src/hooks/usePermissions.test.ts`: query success/error, param forwarding, cache-entry isolation (limit-keyed), all mutations with `invalidateQueries` spy assertions
 - **Tests** — MSW GET single-permission handler (`GET .../permissions/:id`) in `src/test/handlers.ts`
