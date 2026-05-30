@@ -81,6 +81,7 @@ describe('permissionsApi', () => {
       accessMask: '15',
     })
     expect(result.Title).toBe('Admin Document')
+    expect(result.ResourceID).toBe('r2')
     expect(result.AccessMask).toBe(15)
   })
 
