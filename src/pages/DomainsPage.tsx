@@ -66,7 +66,7 @@ export default function DomainsPage() {
             size="icon"
             onClick={(e) => {
               e.stopPropagation()
-              void navigate({ to: "/domains/$domainId/users", params: { domainId: row.original.ID } })
+              void navigate({ to: "/domains/$domainId", params: { domainId: row.original.ID } })
             }}
             aria-label="Open domain"
           >

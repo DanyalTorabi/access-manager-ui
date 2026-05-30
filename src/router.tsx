@@ -11,6 +11,7 @@ import GroupsPage from '@/pages/GroupsPage'
 import ResourcesPage from '@/pages/ResourcesPage'
 import AccessTypesPage from '@/pages/AccessTypesPage'
 import PermissionsPage from '@/pages/PermissionsPage'
+import DomainOverviewPage from '@/pages/DomainOverviewPage'
 import { RootLayout } from '@/components/RootLayout'
 
 const rootRoute = createRootRoute({
@@ -35,6 +36,12 @@ const domainRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/domains/$domainId',
   component: DomainDetailLayout,
+})
+
+const domainIndexRoute = createRoute({
+  getParentRoute: () => domainRoute,
+  path: '/',
+  component: DomainOverviewPage,
 })
 
 const usersRoute = createRoute({
@@ -71,6 +78,7 @@ export const routeTree = rootRoute.addChildren([
   indexRoute,
   domainsRoute,
   domainRoute.addChildren([
+    domainIndexRoute,
     usersRoute,
     groupsRoute,
     resourcesRoute,
