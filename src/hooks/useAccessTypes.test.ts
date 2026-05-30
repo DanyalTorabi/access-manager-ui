@@ -8,10 +8,8 @@ import {
 } from '@/hooks/useAccessTypes'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
-import { TEST_API_BASE as BASE } from '@/test/constants'
+import { TEST_API_BASE as BASE, TEST_DOMAIN_ID as DOMAIN_ID } from '@/test/constants'
 import { makeQueryWrapper } from '@/test/makeQueryWrapper'
-
-const DOMAIN_ID = 'dom-1'
 
 describe('useAccessTypesQuery', () => {
   let wrapper: ReturnType<typeof makeQueryWrapper>['wrapper']

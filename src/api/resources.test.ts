@@ -2,9 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { resourcesApi } from '@/api/resources'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
-import { TEST_API_BASE as BASE } from '@/test/constants'
-
-const DOMAIN_ID = 'dom-1'
+import { TEST_API_BASE as BASE, TEST_DOMAIN_ID as DOMAIN_ID } from '@/test/constants'
 
 describe('resourcesApi', () => {
   it('list returns resources for a domain', async () => {
