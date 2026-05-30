@@ -21,9 +21,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 - **API** — Typed API modules for Users, Groups, Resources, Access Types, Permissions (`src/api/`)
 - **API** — `api/client.ts` now handles 204 No Content responses correctly (no JSON parse attempt)
 - **Hooks** — TanStack Query hooks for all six entities with proper `invalidateQueries` after mutations (`src/hooks/`)
-- **Tests** — `src/api/groups.test.ts`: 8 tests covering list, create (with/without parent), update, delete, and 401 error propagation
-- **Tests** — `src/hooks/useUsers.test.ts` and `src/hooks/useGroups.test.ts`: query success/error and mutation tests mirroring the `useDomains` pattern
-- **Tests** — Vitest + Testing Library + MSW test suite; 51 unit/integration tests covering API layer, hooks, components, and DomainsPage
+- **Tests** — `src/api/groups.test.ts`: 11 tests covering get, list (with/without parent), list query-param forwarding, create (with/without parent), update, clear-parent (with body spy), delete, and 401 error propagation
+- **Tests** — `src/hooks/useUsers.test.ts` and `src/hooks/useGroups.test.ts`: query success/error, all four mutations (create, update, delete) with `invalidateQueries` spy assertions
+- **Tests** — `src/test/makeQueryWrapper.ts`: shared QueryClient wrapper helper used across all hook test files
+- **Tests** — Vitest + Testing Library + MSW test suite; 57 unit/integration tests across 10 files
 - **Routing** — Full TanStack Router route tree: `/domains`, `/domains/:domainId/users|groups|resources|access-types|permissions`
 
 - **T1** — `AGENTS.md`: AI contributor guide covering repo layout, layer boundaries, security rules, post-task checklist, and branching policy
