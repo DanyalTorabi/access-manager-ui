@@ -10,6 +10,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Added
 
+- **Tests** — `src/api/permissions.test.ts`: full CRUD coverage with body spy for `title`/`resource_id`/`access_mask`, ApiError propagation, and query-param forwarding
+- **Tests** — `src/hooks/usePermissions.test.ts`: query success/error, param forwarding, cache-entry isolation (limit-keyed), all mutations with `invalidateQueries` spy assertions
+- **Tests** — MSW GET single-permission handler (`GET .../permissions/:id`) in `src/test/handlers.ts`
+
+### Fixed
+
+- `usePermissionsQuery` query key now includes `limit` — consistent with `useResourcesQuery` and `useAccessTypesQuery` (prevents cache collisions when page size changes)
+
 - **Tests** — `src/api/resources.test.ts` and `src/api/accessTypes.test.ts`: full CRUD coverage with `Bit` field parsing, ApiError propagation, and query-param forwarding spy
 - **Tests** — `src/hooks/useResources.test.ts` and `src/hooks/useAccessTypes.test.ts`: query success/error and all mutations with `invalidateQueries` spy assertions
 - **Tests** — MSW single-GET handlers for `GET .../resources/:id` and `GET .../access-types/:id` in `src/test/handlers.ts`
