@@ -84,7 +84,7 @@ export function Sidebar() {
                   : pathname === resolvedPath || pathname.startsWith(resolvedPath + '/')
               return (
                 <Link
-                  key={path}
+                  key={label}
                   to={to}
                   params={{ domainId: activeDomainId! }}
                   className={cn(
