@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { groupsApi } from '@/api/groups'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
@@ -15,10 +15,29 @@ describe('groupsApi', () => {
     expect(result.data[0].ParentGroupID).toBeNull()
   })
 
+  it('list returns groups with non-null parent group id', async () => {
+    server.use(
+      http.get(`${BASE}/api/v1/domains/:domainId/groups`, ({ params }) =>
+        HttpResponse.json({
+          data: [{ ID: 'g2', DomainID: params['domainId'], Title: 'Sub-Admins', ParentGroupID: 'g1' }],
+          meta: { total: 1, offset: 0, limit: 20, sort: 'title', order: 'asc' },
+        }),
+      ),
+    )
+    const result = await groupsApi.list(DOMAIN_ID)
+    expect(result.data[0].ParentGroupID).toBe('g1')
+  })
+
   it('list includes meta pagination fields', async () => {
     const result = await groupsApi.list(DOMAIN_ID)
     expect(result.meta.total).toBe(1)
     expect(result.meta.offset).toBe(0)
+  })
+
+  it('get returns a group by id', async () => {
+    const result = await groupsApi.get(DOMAIN_ID, 'g1')
+    expect(result.ID).toBe('g1')
+    expect(result.DomainID).toBe(DOMAIN_ID)
   })
 
   it('create returns the new group without parent', async () => {
@@ -40,8 +59,22 @@ describe('groupsApi', () => {
   })
 
   it('update can clear parent group id', async () => {
+    const spy = vi.fn<(body: unknown) => void>()
+    server.use(
+      http.patch(`${BASE}/api/v1/domains/:domainId/groups/:id`, async ({ params, request }) => {
+        const body = await request.json()
+        spy(body)
+        return HttpResponse.json({
+          ID: params['id'],
+          DomainID: params['domainId'],
+          Title: (body as { title?: string }).title ?? 'Admins',
+          ParentGroupID: null,
+        })
+      }),
+    )
     const result = await groupsApi.update(DOMAIN_ID, 'g1', { title: 'Admins', parentGroupId: null })
     expect(result.ParentGroupID).toBeNull()
+    expect(spy.mock.calls[0]?.[0]).toMatchObject({ parent_group_id: null })
   })
 
   it('delete resolves without error', async () => {
@@ -55,5 +88,19 @@ describe('groupsApi', () => {
       ),
     )
     await expect(groupsApi.list(DOMAIN_ID)).rejects.toMatchObject({ status: 401 })
+  })
+})
+
+describe('groupsApi.list query params', () => {
+  it('forwards search param in URL', async () => {
+    const spy = vi.fn<(req: Request) => void>()
+    server.use(
+      http.get(`${BASE}/api/v1/domains/:domainId/groups`, ({ request }) => {
+        spy(request)
+        return HttpResponse.json({ data: [], meta: { total: 0, offset: 0, limit: 20, sort: 'title', order: 'asc' } })
+      }),
+    )
+    await groupsApi.list(DOMAIN_ID, { search: 'admin' })
+    expect(spy.mock.calls[0]?.[0].url).toContain('search=admin')
   })
 })

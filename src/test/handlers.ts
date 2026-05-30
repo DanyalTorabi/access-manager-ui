@@ -60,6 +60,9 @@ export const handlers = [
       meta: listMeta(1),
     }),
   ),
+  http.get(`${BASE}/api/v1/domains/:domainId/groups/:id`, ({ params }) =>
+    HttpResponse.json({ ID: params['id'], DomainID: params['domainId'], Title: 'Admins', ParentGroupID: null }),
+  ),
   http.post(`${BASE}/api/v1/domains/:domainId/groups`, async ({ params, request }) => {
     const body = (await request.json()) as { title: string; parent_group_id?: string | null }
     return HttpResponse.json(
