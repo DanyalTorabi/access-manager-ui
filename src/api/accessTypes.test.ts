@@ -28,11 +28,28 @@ describe('accessTypesApi', () => {
   })
 
   it('create returns the new access type with parsed Bit value', async () => {
+    const bodySpy = vi.fn<(body: unknown) => void>()
+    server.use(
+      http.post(`${BASE}/api/v1/domains/:domainId/access-types`, async ({ params, request }) => {
+        const body = await request.json()
+        bodySpy(body)
+        return HttpResponse.json(
+          {
+            ID: 'at-new',
+            DomainID: params['domainId'],
+            Title: (body as { title: string }).title,
+            Bit: parseInt((body as { bit: string }).bit, 10),
+          },
+          { status: 201 },
+        )
+      }),
+    )
     const result = await accessTypesApi.create(DOMAIN_ID, 'Write', '2')
     expect(result.Title).toBe('Write')
     expect(result.ID).toBe('at-new')
     expect(result.DomainID).toBe(DOMAIN_ID)
     expect(result.Bit).toBe(2)
+    expect(bodySpy.mock.calls[0]?.[0]).toMatchObject({ title: 'Write', bit: '2' })
   })
 
   it('update returns updated access type when only title is changed', async () => {
@@ -82,5 +99,22 @@ describe('accessTypesApi.list query params', () => {
     )
     await accessTypesApi.list(DOMAIN_ID, { search: 'write' })
     expect(spy.mock.calls[0]?.[0].url).toContain('search=write')
+  })
+
+  it('forwards limit and offset params in URL', async () => {
+    const spy = vi.fn<(req: Request) => void>()
+    server.use(
+      http.get(`${BASE}/api/v1/domains/:domainId/access-types`, ({ request }) => {
+        spy(request)
+        return HttpResponse.json({
+          data: [],
+          meta: { total: 0, offset: 20, limit: 10, sort: 'title', order: 'asc' },
+        })
+      }),
+    )
+    await accessTypesApi.list(DOMAIN_ID, { limit: 10, offset: 20 })
+    const url = spy.mock.calls[0]?.[0].url
+    expect(url).toContain('limit=10')
+    expect(url).toContain('offset=20')
   })
 })

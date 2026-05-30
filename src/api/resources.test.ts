@@ -26,10 +26,22 @@ describe('resourcesApi', () => {
   })
 
   it('create returns the new resource', async () => {
+    const bodySpy = vi.fn<(body: unknown) => void>()
+    server.use(
+      http.post(`${BASE}/api/v1/domains/:domainId/resources`, async ({ params, request }) => {
+        const body = await request.json()
+        bodySpy(body)
+        return HttpResponse.json(
+          { ID: 'r-new', DomainID: params['domainId'], Title: (body as { title: string }).title },
+          { status: 201 },
+        )
+      }),
+    )
     const result = await resourcesApi.create(DOMAIN_ID, 'Invoice')
     expect(result.Title).toBe('Invoice')
     expect(result.ID).toBe('r-new')
     expect(result.DomainID).toBe(DOMAIN_ID)
+    expect(bodySpy.mock.calls[0]?.[0]).toMatchObject({ title: 'Invoice' })
   })
 
   it('update returns the updated resource', async () => {
@@ -66,5 +78,22 @@ describe('resourcesApi.list query params', () => {
     )
     await resourcesApi.list(DOMAIN_ID, { search: 'invoice' })
     expect(spy.mock.calls[0]?.[0].url).toContain('search=invoice')
+  })
+
+  it('forwards limit and offset params in URL', async () => {
+    const spy = vi.fn<(req: Request) => void>()
+    server.use(
+      http.get(`${BASE}/api/v1/domains/:domainId/resources`, ({ request }) => {
+        spy(request)
+        return HttpResponse.json({
+          data: [],
+          meta: { total: 0, offset: 20, limit: 10, sort: 'title', order: 'asc' },
+        })
+      }),
+    )
+    await resourcesApi.list(DOMAIN_ID, { limit: 10, offset: 20 })
+    const url = spy.mock.calls[0]?.[0].url
+    expect(url).toContain('limit=10')
+    expect(url).toContain('offset=20')
   })
 })
