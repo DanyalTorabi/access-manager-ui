@@ -13,11 +13,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 - **Tests** — `src/api/permissions.test.ts`: full CRUD coverage with body spy for `title`/`resource_id`/`access_mask`, ApiError propagation, and query-param forwarding
 - **Tests** — `src/hooks/usePermissions.test.ts`: query success/error, param forwarding, cache-entry isolation (limit-keyed), all mutations with `invalidateQueries` spy assertions
 - **Tests** — MSW GET single-permission handler (`GET .../permissions/:id`) in `src/test/handlers.ts`
-
-### Fixed
-
-- `usePermissionsQuery` query key now includes `limit` — consistent with `useResourcesQuery` and `useAccessTypesQuery` (prevents cache collisions when page size changes)
-
 - **Tests** — `src/api/resources.test.ts` and `src/api/accessTypes.test.ts`: full CRUD coverage with `Bit` field parsing, ApiError propagation, and query-param forwarding spy
 - **Tests** — `src/hooks/useResources.test.ts` and `src/hooks/useAccessTypes.test.ts`: query success/error and all mutations with `invalidateQueries` spy assertions
 - **Tests** — MSW single-GET handlers for `GET .../resources/:id` and `GET .../access-types/:id` in `src/test/handlers.ts`
@@ -62,6 +57,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Fixed
 
+- `usePermissionsQuery` query key now includes `limit` — consistent with `useResourcesQuery` and `useAccessTypesQuery` (prevents cache collisions when page size changes)
 - **All query hooks** — `limit` now stored as-passed in query key (no `?? N` fallback) across all five entity hooks (`useDomainsQuery`, `useUsersQuery`, `useGroupsQuery`, `useResourcesQuery`, `useAccessTypesQuery`); eliminates magic numbers and semantic mismatch between cache key and URL
 - **T7** — `DomainsPage` Title column lacked an explicit `id`, causing `onSortChange` to emit `'Title'` (PascalCase) instead of the API-expected `'title'`; added `id: 'title'` to the column definition
 - **T7** — `vitest.config.ts` now pins `VITE_API_BASE_URL` via `define` so the test suite is independent of `.env.local` overrides (tests no longer fail when the local dev URL differs from MSW handler registrations)
