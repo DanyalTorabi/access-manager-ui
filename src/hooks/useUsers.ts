@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function useUsersQuery(domainId: string, params: ListParams = {}) {
   return useQuery({
-    queryKey: ['users', domainId, params.offset ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['users', domainId, params.offset ?? 0, params.limit ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => usersApi.list(domainId, params),
     enabled: !!domainId,
   })

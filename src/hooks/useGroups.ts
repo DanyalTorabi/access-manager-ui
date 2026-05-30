@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function useGroupsQuery(domainId: string, params: ListParams = {}) {
   return useQuery({
-    queryKey: ['groups', domainId, params.offset ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['groups', domainId, params.offset ?? 0, params.limit ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => groupsApi.list(domainId, params),
     enabled: !!domainId,
   })
