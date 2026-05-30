@@ -19,14 +19,6 @@ const data: Row[] = [
 ]
 
 describe('EntityTable', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
   it('renders column headers', () => {
     render(
       <EntityTable
@@ -137,9 +129,8 @@ describe('EntityTable', () => {
     expect(onDoubleClick).toHaveBeenCalledWith(data[0])
   })
 
-  it('calls onSearchChange with debounced value when search input changes', () => {
-    const onSearchChange = vi.fn()
-    render(
+  it('syncs inputValue when search prop is reset by parent', () => {
+    const { rerender } = render(
       <EntityTable
         columns={columns}
         data={data}
@@ -149,39 +140,81 @@ describe('EntityTable', () => {
         offset={0}
         onOffsetChange={vi.fn()}
         search=""
-        onSearchChange={onSearchChange}
+        onSearchChange={vi.fn()}
       />,
     )
-    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Alpha' } })
-    // Should not fire immediately
-    expect(onSearchChange).not.toHaveBeenCalled()
-    // After debounce delay, callback should be invoked
-    vi.runAllTimers()
-    expect(onSearchChange).toHaveBeenCalledOnce()
-    expect(onSearchChange).toHaveBeenCalledWith('Alpha')
+    expect(screen.getByRole('searchbox')).toHaveValue('')
+    rerender(
+      <EntityTable
+        columns={columns}
+        data={data}
+        isLoading={false}
+        isError={false}
+        total={2}
+        offset={0}
+        onOffsetChange={vi.fn()}
+        search="foo"
+        onSearchChange={vi.fn()}
+      />,
+    )
+    expect(screen.getByRole('searchbox')).toHaveValue('foo')
   })
 
-  it('debounces rapid keystrokes and fires onSearchChange only once', () => {
-    const onSearchChange = vi.fn()
-    render(
-      <EntityTable
-        columns={columns}
-        data={data}
-        isLoading={false}
-        isError={false}
-        total={2}
-        offset={0}
-        onOffsetChange={vi.fn()}
-        search=""
-        onSearchChange={onSearchChange}
-      />,
-    )
-    const input = screen.getByRole('searchbox')
-    fireEvent.change(input, { target: { value: 'A' } })
-    fireEvent.change(input, { target: { value: 'Al' } })
-    fireEvent.change(input, { target: { value: 'Alp' } })
-    vi.runAllTimers()
-    expect(onSearchChange).toHaveBeenCalledOnce()
-    expect(onSearchChange).toHaveBeenCalledWith('Alp')
+  describe('debounced search', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('calls onSearchChange with debounced value when search input changes', () => {
+      const onSearchChange = vi.fn()
+      render(
+        <EntityTable
+          columns={columns}
+          data={data}
+          isLoading={false}
+          isError={false}
+          total={2}
+          offset={0}
+          onOffsetChange={vi.fn()}
+          search=""
+          onSearchChange={onSearchChange}
+        />,
+      )
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Alpha' } })
+      // Should not fire immediately
+      expect(onSearchChange).not.toHaveBeenCalled()
+      // After debounce delay, callback should be invoked
+      vi.runAllTimers()
+      expect(onSearchChange).toHaveBeenCalledOnce()
+      expect(onSearchChange).toHaveBeenCalledWith('Alpha')
+    })
+
+    it('debounces rapid keystrokes and fires onSearchChange only once', () => {
+      const onSearchChange = vi.fn()
+      render(
+        <EntityTable
+          columns={columns}
+          data={data}
+          isLoading={false}
+          isError={false}
+          total={2}
+          offset={0}
+          onOffsetChange={vi.fn()}
+          search=""
+          onSearchChange={onSearchChange}
+        />,
+      )
+      const input = screen.getByRole('searchbox')
+      fireEvent.change(input, { target: { value: 'A' } })
+      fireEvent.change(input, { target: { value: 'Al' } })
+      fireEvent.change(input, { target: { value: 'Alp' } })
+      vi.runAllTimers()
+      expect(onSearchChange).toHaveBeenCalledOnce()
+      expect(onSearchChange).toHaveBeenCalledWith('Alp')
+    })
   })
 })
