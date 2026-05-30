@@ -10,8 +10,10 @@ import {
   useUserAuthzResources,
   useGroupAuthzResources,
 } from '@/hooks/useGrants'
-import { TEST_DOMAIN_ID as DOMAIN_ID } from '@/test/constants'
+import { TEST_DOMAIN_ID as DOMAIN_ID, TEST_API_BASE as BASE } from '@/test/constants'
 import { makeQueryWrapper } from '@/test/makeQueryWrapper'
+import { server } from '@/test/server'
+import { http, HttpResponse } from 'msw'
 
 const USER_ID = 'u1'
 const GROUP_ID = 'g1'
@@ -122,5 +124,37 @@ describe('useGroupAuthzResources', () => {
     const { result } = renderHook(() => useGroupAuthzResources(DOMAIN_ID, ''), { wrapper })
     expect(result.current.fetchStatus).toBe('idle')
     expect(result.current.isLoading).toBe(false)
+  })
+})
+
+describe('useGrantPermissionToUser error path', () => {
+  it('mutation enters error state on 4xx', async () => {
+    server.use(
+      http.post(
+        `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permissionId`,
+        () => HttpResponse.json({ error: 'Forbidden' }, { status: 403 }),
+      ),
+    )
+    const { wrapper } = makeQueryWrapper()
+    const { result } = renderHook(() => useGrantPermissionToUser(DOMAIN_ID), { wrapper })
+    result.current.mutate({ userId: 'u1', permissionId: 'p1' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error).toBeDefined()
+  })
+})
+
+describe('useGrantPermissionToGroup error path', () => {
+  it('mutation enters error state on 4xx', async () => {
+    server.use(
+      http.post(
+        `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permissionId`,
+        () => HttpResponse.json({ error: 'Forbidden' }, { status: 403 }),
+      ),
+    )
+    const { wrapper } = makeQueryWrapper()
+    const { result } = renderHook(() => useGrantPermissionToGroup(DOMAIN_ID), { wrapper })
+    result.current.mutate({ groupId: 'g1', permissionId: 'p1' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error).toBeDefined()
   })
 })
