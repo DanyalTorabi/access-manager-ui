@@ -32,6 +32,7 @@ export default function GroupsPage() {
   const [offset, setOffset] = useState(0)
   const [sort, setSort] = useState('title')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [search, setSearch] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingGroup, setEditingGroup] = useState<Group | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Group | null>(null)
@@ -41,6 +42,7 @@ export default function GroupsPage() {
     limit: PAGE_SIZE,
     sort,
     order,
+    search,
   })
 
   const { data: allGroups } = useGroupsQuery(domainId, { limit: 100 })
@@ -129,7 +131,8 @@ export default function GroupsPage() {
           setSort(s)
           setOrder(o)
         }}
-        searchPlaceholder="Filter this page…"
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setOffset(0) }}
       />
 
       <EntityDrawer

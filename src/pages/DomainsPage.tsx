@@ -29,6 +29,7 @@ export default function DomainsPage() {
   const [offset, setOffset] = useState(0)
   const [sort, setSort] = useState("title")
   const [order, setOrder] = useState<"asc" | "desc">("asc")
+  const [search, setSearch] = useState("")
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingDomain, setEditingDomain] = useState<Domain | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Domain | null>(null)
@@ -38,6 +39,7 @@ export default function DomainsPage() {
     limit: PAGE_SIZE,
     sort,
     order,
+    search,
   })
 
   const createMutation = useCreateDomain()
@@ -116,7 +118,8 @@ export default function DomainsPage() {
         pageSize={PAGE_SIZE}
         onRowDoubleClick={openEdit}
         onSortChange={(s, o) => { setSort(s); setOrder(o) }}
-        searchPlaceholder="Filter this page…"
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setOffset(0) }}
       />
 
       <p className="text-xs text-muted-foreground">
