@@ -1,26 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { createElement } from 'react'
 import { useUsersQuery, useCreateUser, useDeleteUser } from '@/hooks/useUsers'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
 import { TEST_API_BASE as BASE } from '@/test/constants'
+import { makeQueryWrapper } from '@/test/makeQueryWrapper'
 
 const DOMAIN_ID = 'dom-1'
 
-function makeWrapper() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return ({ children }: { children: ReactNode }) =>
-    createElement(QueryClientProvider, { client: qc }, children)
-}
-
 describe('useUsersQuery', () => {
-  let wrapper: ReturnType<typeof makeWrapper>
+  let wrapper: ReturnType<typeof makeQueryWrapper>['wrapper']
 
   beforeEach(() => {
-    wrapper = makeWrapper()
+    wrapper = makeQueryWrapper().wrapper
   })
 
   it('returns user data on success', async () => {
@@ -43,7 +35,7 @@ describe('useUsersQuery', () => {
 
 describe('useCreateUser', () => {
   it('mutation resolves with new user', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useCreateUser(DOMAIN_ID), { wrapper })
     result.current.mutate('Bob')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -54,7 +46,7 @@ describe('useCreateUser', () => {
 
 describe('useDeleteUser', () => {
   it('mutation resolves on delete', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useDeleteUser(DOMAIN_ID), { wrapper })
     result.current.mutate('u1')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))

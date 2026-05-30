@@ -1,24 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { createElement } from 'react'
 import { useDomainsQuery, useCreateDomain, useDeleteDomain } from '@/hooks/useDomains'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
 import { TEST_API_BASE as BASE } from '@/test/constants'
-
-function makeWrapper() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return ({ children }: { children: ReactNode }) =>
-    createElement(QueryClientProvider, { client: qc }, children)
-}
+import { makeQueryWrapper } from '@/test/makeQueryWrapper'
 
 describe('useDomainsQuery', () => {
-  let wrapper: ReturnType<typeof makeWrapper>
+  let wrapper: ReturnType<typeof makeQueryWrapper>['wrapper']
 
   beforeEach(() => {
-    wrapper = makeWrapper()
+    wrapper = makeQueryWrapper().wrapper
   })
 
   it('returns domain data on success', async () => {
@@ -40,7 +32,7 @@ describe('useDomainsQuery', () => {
 
 describe('useCreateDomain', () => {
   it('mutation resolves with new domain', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useCreateDomain(), { wrapper })
     result.current.mutate('test.com')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -50,7 +42,7 @@ describe('useCreateDomain', () => {
 
 describe('useDeleteDomain', () => {
   it('mutation resolves on delete', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useDeleteDomain(), { wrapper })
     result.current.mutate('d1')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))

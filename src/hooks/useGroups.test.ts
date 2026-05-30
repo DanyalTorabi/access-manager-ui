@@ -1,26 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { createElement } from 'react'
 import { useGroupsQuery, useCreateGroup, useDeleteGroup } from '@/hooks/useGroups'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
 import { TEST_API_BASE as BASE } from '@/test/constants'
+import { makeQueryWrapper } from '@/test/makeQueryWrapper'
 
 const DOMAIN_ID = 'dom-1'
 
-function makeWrapper() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return ({ children }: { children: ReactNode }) =>
-    createElement(QueryClientProvider, { client: qc }, children)
-}
-
 describe('useGroupsQuery', () => {
-  let wrapper: ReturnType<typeof makeWrapper>
+  let wrapper: ReturnType<typeof makeQueryWrapper>['wrapper']
 
   beforeEach(() => {
-    wrapper = makeWrapper()
+    wrapper = makeQueryWrapper().wrapper
   })
 
   it('returns group data on success', async () => {
@@ -43,7 +35,7 @@ describe('useGroupsQuery', () => {
 
 describe('useCreateGroup', () => {
   it('mutation resolves with new group (no parent)', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useCreateGroup(DOMAIN_ID), { wrapper })
     result.current.mutate({ title: 'Editors' })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -52,7 +44,7 @@ describe('useCreateGroup', () => {
   })
 
   it('mutation resolves with new group (with parent)', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useCreateGroup(DOMAIN_ID), { wrapper })
     result.current.mutate({ title: 'Sub-Admins', parentGroupId: 'g1' })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -62,7 +54,7 @@ describe('useCreateGroup', () => {
 
 describe('useDeleteGroup', () => {
   it('mutation resolves on delete', async () => {
-    const wrapper = makeWrapper()
+    const { wrapper } = makeQueryWrapper()
     const { result } = renderHook(() => useDeleteGroup(DOMAIN_ID), { wrapper })
     result.current.mutate('g1')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
