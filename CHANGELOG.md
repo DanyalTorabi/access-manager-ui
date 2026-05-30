@@ -10,6 +10,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Added
 
+- **Tests** — `src/api/resources.test.ts` and `src/api/accessTypes.test.ts`: full CRUD coverage with `Bit` field parsing, ApiError propagation, and query-param forwarding spy (8 and 10 tests respectively)
+- **Tests** — `src/hooks/useResources.test.ts` and `src/hooks/useAccessTypes.test.ts`: query success/error and all three mutations (`create`, `update`, `delete`) with `invalidateQueries` spy assertions
+- **Tests** — MSW single-GET handlers for `GET .../resources/:id` and `GET .../access-types/:id` in `src/test/handlers.ts`
+
+### Fixed
+
+- **`useResourcesQuery`** — `limit` param now included in query key, preventing cache collisions when different page sizes are used
+- **`useAccessTypesQuery`** — same `limit`-in-query-key fix
+
+### Added
+
 - **UI** — Left sidebar navigation with icons (Globe, Users, Layers, Package, Key, ShieldCheck) and "Access Manager" branding
 - **UI** — Light/dark theme toggle in sidebar footer with localStorage persistence (`ThemeProvider`, `ThemeToggle`)
 - **UI** — Six entity pages: Domains, Users, Groups, Resources, Access Types, Permissions — all with list, search, sort, and offset-based pagination

@@ -8,7 +8,7 @@
 
 ## Status
 
-**Implemented.** This file is a retroactive spec documenting what was built.
+**Complete.**
 
 ## Problem / motivation
 
@@ -22,10 +22,15 @@ Full CRUD for resources and access types within a domain. Access types display t
 
 - `src/api/resources.ts` — `resourcesApi.list`, `get`, `create`, `update`, `delete`
 - `src/api/accessTypes.ts` — `accessTypesApi.list`, `get`, `create`, `update`, `delete`; `create`/`update` carry `bit: number`
-- `src/hooks/useResources.ts` — `useResourcesQuery`, create/update/delete mutations
-- `src/hooks/useAccessTypes.ts` — `useAccessTypesQuery`, create/update/delete mutations
+- `src/hooks/useResources.ts` — `useResourcesQuery`, create/update/delete mutations; `limit` included in query key
+- `src/hooks/useAccessTypes.ts` — `useAccessTypesQuery`, create/update/delete mutations; `limit` included in query key
 - `src/pages/ResourcesPage.tsx` — full CRUD page
 - `src/pages/AccessTypesPage.tsx` — full CRUD page; bit column displays `N (0xN)` to show the hex value alongside decimal
+- `src/api/resources.test.ts` — full CRUD coverage, error propagation, query-param forwarding spy
+- `src/api/accessTypes.test.ts` — full CRUD coverage including `Bit` field parsing, error propagation, query-param forwarding spy
+- `src/hooks/useResources.test.ts` — query success/error; all three mutations with `invalidateQueries` spy assertions
+- `src/hooks/useAccessTypes.test.ts` — query success/error; all three mutations with `invalidateQueries` spy assertions
+- `src/test/handlers.ts` — single-GET MSW handlers for `GET .../resources/:id` and `GET .../access-types/:id`
 
 ## Steps
 
@@ -33,6 +38,10 @@ Full CRUD for resources and access types within a domain. Access types display t
 2. Build hooks
 3. Build `ResourcesPage` reusing shared components
 4. Build `AccessTypesPage`; add custom column renderer for bit: `${v} (0x${v.toString(16)})`
+5. Fix `limit` missing from query keys in both hooks (cache collision bug)
+6. Add single-GET MSW handlers for resources and access-types
+7. Write `src/api/resources.test.ts` and `src/api/accessTypes.test.ts`
+8. Write `src/hooks/useResources.test.ts` and `src/hooks/useAccessTypes.test.ts`
 
 ## Files / paths
 
@@ -42,7 +51,10 @@ Full CRUD for resources and access types within a domain. Access types display t
 
 - Resources and access types list, create, edit, delete within a domain
 - Access type bit column shows `N (0xN)` format
-- `make type-check && make lint` pass
+- `limit` param included in `useResourcesQuery` and `useAccessTypesQuery` query keys
+- All three mutations (`create`, `update`, `delete`) for both entities covered with `invalidateQueries` spy assertions
+- Query-param forwarding verified via URL spy in API tests
+- `make type-check && make lint && make test-run` pass
 
 ## Out of scope
 
