@@ -209,21 +209,21 @@ export const handlers = [
 
   // Grants — user-permission
   http.post(
-    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permId`,
+    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permissionId`,
     () => new HttpResponse(null, { status: 204 }),
   ),
   http.delete(
-    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permId`,
+    `${BASE}/api/v1/domains/:domainId/users/:userId/permissions/:permissionId`,
     () => new HttpResponse(null, { status: 204 }),
   ),
 
   // Grants — group-permission
   http.post(
-    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permId`,
+    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permissionId`,
     () => new HttpResponse(null, { status: 204 }),
   ),
   http.delete(
-    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permId`,
+    `${BASE}/api/v1/domains/:domainId/groups/:groupId/permissions/:permissionId`,
     () => new HttpResponse(null, { status: 204 }),
   ),
 
