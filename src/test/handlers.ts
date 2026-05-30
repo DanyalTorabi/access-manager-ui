@@ -91,6 +91,9 @@ export const handlers = [
       meta: listMeta(1),
     }),
   ),
+  http.get(`${BASE}/api/v1/domains/:domainId/resources/:id`, ({ params }) =>
+    HttpResponse.json({ ID: params['id'], DomainID: params['domainId'], Title: 'Document' }),
+  ),
   http.post(`${BASE}/api/v1/domains/:domainId/resources`, async ({ params, request }) => {
     const body = (await request.json()) as { title: string }
     return HttpResponse.json(
@@ -113,6 +116,9 @@ export const handlers = [
       data: [{ ID: 'at1', DomainID: params['domainId'], Title: 'Read', Bit: 1 }],
       meta: listMeta(1),
     }),
+  ),
+  http.get(`${BASE}/api/v1/domains/:domainId/access-types/:id`, ({ params }) =>
+    HttpResponse.json({ ID: params['id'], DomainID: params['domainId'], Title: 'Read', Bit: 1 }),
   ),
   http.post(`${BASE}/api/v1/domains/:domainId/access-types`, async ({ params, request }) => {
     const body = (await request.json()) as { title: string; bit: string }
