@@ -23,7 +23,7 @@ const PAGE_SIZE = 20
 
 const groupSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  parentGroupId: z.string().uuid('Must be a valid UUID').or(z.literal('')).optional(),
+  parentGroupId: z.string().min(1).or(z.literal('')).optional(),
 })
 type GroupForm = z.infer<typeof groupSchema>
 
