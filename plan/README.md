@@ -17,7 +17,7 @@ Work through phases in order (0 → N) unless a plan's **Dependencies** section 
 | 4 | Resource & Access Type management — CRUD, bit-flag UX | T9 | phase-4/ |
 | 5 | Permission management — CRUD, resource+mask composition | T10 | phase-5/ |
 | 6 | Authorization features — server-side search, domain overview, grants, authz checker | T11–T14 | phase-6/ |
-| 7 | Polish & hardening — toasts, breadcrumbs, error boundaries, skeletons, tests, v0.1.0 | T15–T16, T19 | phase-7/ |
+| 7 | Polish & hardening — toasts, breadcrumbs, error boundaries, skeletons, tests, v0.1.0 | T15–T16, T19–T21 | phase-7/ |
 | 8 | Demo playground — scenario seeder, fictional demo app, user switcher, authz trace | T17–T18 | phase-8/ |
 
 **Pickup from GitHub Issues.** Use `docs/frontend-architecture.md` for layer and component patterns. The current active milestone is **26Q2** (April–June 2026).
