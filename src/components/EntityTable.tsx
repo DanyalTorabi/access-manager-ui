@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const DEFAULT_PAGE_SIZE = 20
+const SEARCH_DEBOUNCE_MS = 300
 
 interface EntityTableProps<TData> {
   columns: ColumnDef<TData>[]
@@ -53,18 +54,29 @@ export function EntityTable<TData>({
 }: EntityTableProps<TData>) {
   const [inputValue, setInputValue] = useState(search)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Always call the latest onSearchChange prop from inside the debounce timer
+  const onSearchChangeRef = useRef(onSearchChange)
+  useEffect(() => { onSearchChangeRef.current = onSearchChange })
 
-  // Sync inputValue if parent resets search externally (e.g. on page navigation)
+  // Cancel any pending debounce and sync inputValue when parent resets search externally
   useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
     setInputValue(search)
   }, [search])
+
+  // Cancel pending debounce on unmount to avoid calling stale callbacks
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [])
 
   function handleInputChange(value: string) {
     setInputValue(value)
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      onSearchChange(value)
-    }, 300)
+      onSearchChangeRef.current(value)
+    }, SEARCH_DEBOUNCE_MS)
   }
 
   const [sorting, setSorting] = useState<SortingState>([])
