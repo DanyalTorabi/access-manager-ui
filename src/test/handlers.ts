@@ -156,6 +156,15 @@ export const handlers = [
       meta: listMeta(1),
     }),
   ),
+  http.get(`${BASE}/api/v1/domains/:domainId/permissions/:id`, ({ params }) =>
+    HttpResponse.json({
+      ID: params['id'],
+      DomainID: params['domainId'],
+      Title: 'Read Document',
+      ResourceID: 'r1',
+      AccessMask: 1,
+    }),
+  ),
   http.post(`${BASE}/api/v1/domains/:domainId/permissions`, async ({ params, request }) => {
     const body = (await request.json()) as { title: string; resource_id: string; access_mask: string }
     return HttpResponse.json(
