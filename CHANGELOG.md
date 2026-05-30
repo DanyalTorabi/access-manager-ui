@@ -8,6 +8,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ## [Unreleased]
 
+### Changed
+
+- **Search** — Search box on all entity pages now queries the full dataset via the backend `?search=` parameter instead of filtering the current page only; pagination resets to page 1 on each new search
+
 ### Added
 
 - **Tests** — `src/api/permissions.test.ts`: full CRUD coverage with body spy for `title`/`resource_id`/`access_mask`, ApiError propagation, and query-param forwarding
