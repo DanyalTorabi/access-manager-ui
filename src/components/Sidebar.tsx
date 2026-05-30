@@ -1,4 +1,4 @@
-import { Globe, Users, Layers, Package, Key, ShieldCheck, ChevronLeft } from 'lucide-react'
+import { Globe, Users, Layers, Package, Key, ShieldCheck, ChevronLeft, LayoutGrid } from 'lucide-react'
 import { Link, useRouterState, useParams } from '@tanstack/react-router'
 import { useDomainQuery } from '@/hooks/useDomains'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -10,6 +10,7 @@ const topNavItems = [
 ]
 
 const domainSubItems = [
+  { path: '' as const, label: 'Overview', icon: LayoutGrid, to: '/domains/$domainId' as const },
   { path: 'users' as const, label: 'Users', icon: Users, to: '/domains/$domainId/users' as const },
   { path: 'groups' as const, label: 'Groups', icon: Layers, to: '/domains/$domainId/groups' as const },
   { path: 'resources' as const, label: 'Resources', icon: Package, to: '/domains/$domainId/resources' as const },
@@ -73,8 +74,14 @@ export function Sidebar() {
             </div>
             <Separator className="my-1" />
             {domainSubItems.map(({ path, label, icon: Icon, to }) => {
-              const resolvedPath = `/domains/${activeDomainId}/${path}`
-              const isActive = pathname === resolvedPath || pathname.startsWith(resolvedPath + '/')
+              const resolvedPath =
+                path === ''
+                  ? `/domains/${activeDomainId}`
+                  : `/domains/${activeDomainId}/${path}`
+              const isActive =
+                path === ''
+                  ? pathname === resolvedPath || pathname === resolvedPath + '/'
+                  : pathname === resolvedPath || pathname.startsWith(resolvedPath + '/')
               return (
                 <Link
                   key={path}
