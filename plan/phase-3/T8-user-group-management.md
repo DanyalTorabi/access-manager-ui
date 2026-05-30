@@ -52,7 +52,7 @@ Full CRUD for users and groups within a domain, including the parent-group relat
 - Group form shows parent-group dropdown; parent name resolved in table
 - `src/api/groups.test.ts` covers: list, list-with-parent, create, create-with-parent, update, delete, 401 error
 - `src/hooks/useUsers.test.ts` and `src/hooks/useGroups.test.ts` cover: query success/error, create mutation, delete mutation
-- `make type-check && make lint && npm run test:run` all pass
+- `make type-check && make lint && make test-run` all pass
 
 ## Out of scope
 
