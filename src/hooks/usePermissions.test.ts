@@ -64,6 +64,7 @@ describe('useCreatePermission', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.Title).toBe('Write Document')
     expect(result.current.data?.ResourceID).toBe('r1')
+    expect(result.current.data?.AccessMask).toBe(7)
     expect(result.current.data?.DomainID).toBe(DOMAIN_ID)
     expect(spy).toHaveBeenCalledWith({ queryKey: ['permissions', DOMAIN_ID] })
   })
