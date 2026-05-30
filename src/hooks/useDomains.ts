@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function useDomainsQuery(params: ListParams = {}) {
   return useQuery({
-    queryKey: ['domains', params.offset ?? 0, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['domains', params.offset, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => domainsApi.list(params),
   })
 }

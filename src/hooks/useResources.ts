@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function useResourcesQuery(domainId: string, params: ListParams = {}) {
   return useQuery({
-    queryKey: ['resources', domainId, params.offset ?? 0, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['resources', domainId, params.offset, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => resourcesApi.list(domainId, params),
     enabled: !!domainId,
   })
