@@ -10,6 +10,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Added
 
+- **Tests** — `src/api/resources.test.ts` and `src/api/accessTypes.test.ts`: full CRUD coverage with `Bit` field parsing, ApiError propagation, and query-param forwarding spy
+- **Tests** — `src/hooks/useResources.test.ts` and `src/hooks/useAccessTypes.test.ts`: query success/error and all mutations with `invalidateQueries` spy assertions
+- **Tests** — MSW single-GET handlers for `GET .../resources/:id` and `GET .../access-types/:id` in `src/test/handlers.ts`
 - **UI** — Left sidebar navigation with icons (Globe, Users, Layers, Package, Key, ShieldCheck) and "Access Manager" branding
 - **UI** — Light/dark theme toggle in sidebar footer with localStorage persistence (`ThemeProvider`, `ThemeToggle`)
 - **UI** — Six entity pages: Domains, Users, Groups, Resources, Access Types, Permissions — all with list, search, sort, and offset-based pagination
@@ -51,6 +54,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — Semantic Ve
 
 ### Fixed
 
+- **All query hooks** — `limit` now stored as-passed in query key (no `?? N` fallback) across all five entity hooks (`useDomainsQuery`, `useUsersQuery`, `useGroupsQuery`, `useResourcesQuery`, `useAccessTypesQuery`); eliminates magic numbers and semantic mismatch between cache key and URL
 - **T7** — `DomainsPage` Title column lacked an explicit `id`, causing `onSortChange` to emit `'Title'` (PascalCase) instead of the API-expected `'title'`; added `id: 'title'` to the column definition
 - **T7** — `vitest.config.ts` now pins `VITE_API_BASE_URL` via `define` so the test suite is independent of `.env.local` overrides (tests no longer fail when the local dev URL differs from MSW handler registrations)
 

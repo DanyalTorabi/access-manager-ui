@@ -4,7 +4,7 @@ import type { ListParams } from '@/api/types'
 
 export function useAccessTypesQuery(domainId: string, params: ListParams = {}) {
   return useQuery({
-    queryKey: ['access-types', domainId, params.offset ?? 0, params.search ?? '', params.sort ?? '', params.order ?? ''],
+    queryKey: ['access-types', domainId, params.offset ?? 0, params.limit, params.search ?? '', params.sort ?? '', params.order ?? ''],
     queryFn: () => accessTypesApi.list(domainId, params),
     enabled: !!domainId,
   })
