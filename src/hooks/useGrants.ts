@@ -7,7 +7,6 @@ export function useAddUserToGroup(domainId: string) {
     mutationFn: ({ userId, groupId }: { userId: string; groupId: string }) =>
       grantsApi.addUserToGroup(domainId, userId, groupId),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['users', domainId] })
       void qc.invalidateQueries({ queryKey: ['userAuthzResources', domainId] })
     },
   })
@@ -19,7 +18,6 @@ export function useRemoveUserFromGroup(domainId: string) {
     mutationFn: ({ userId, groupId }: { userId: string; groupId: string }) =>
       grantsApi.removeUserFromGroup(domainId, userId, groupId),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['users', domainId] })
       void qc.invalidateQueries({ queryKey: ['userAuthzResources', domainId] })
     },
   })

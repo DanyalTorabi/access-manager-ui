@@ -18,26 +18,26 @@ const GROUP_ID = 'g1'
 const PERM_ID = 'p1'
 
 describe('useAddUserToGroup', () => {
-  it('mutation resolves and invalidates users and userAuthzResources', async () => {
+  it('mutation resolves and invalidates userAuthzResources', async () => {
     const { wrapper, queryClient } = makeQueryWrapper()
     const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useAddUserToGroup(DOMAIN_ID), { wrapper })
     result.current.mutate({ userId: USER_ID, groupId: GROUP_ID })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
     expect(spy).toHaveBeenCalledWith({ queryKey: ['userAuthzResources', DOMAIN_ID] })
+    expect(spy).not.toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
   })
 })
 
 describe('useRemoveUserFromGroup', () => {
-  it('mutation resolves and invalidates users and userAuthzResources', async () => {
+  it('mutation resolves and invalidates userAuthzResources', async () => {
     const { wrapper, queryClient } = makeQueryWrapper()
     const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useRemoveUserFromGroup(DOMAIN_ID), { wrapper })
     result.current.mutate({ userId: USER_ID, groupId: GROUP_ID })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
     expect(spy).toHaveBeenCalledWith({ queryKey: ['userAuthzResources', DOMAIN_ID] })
+    expect(spy).not.toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
   })
 })
 
