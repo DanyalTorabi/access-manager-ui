@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useGroupsQuery, useCreateGroup, useDeleteGroup } from '@/hooks/useGroups'
+import { useGroupsQuery, useCreateGroup, useUpdateGroup, useDeleteGroup } from '@/hooks/useGroups'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
 import { TEST_API_BASE as BASE } from '@/test/constants'
@@ -34,13 +34,15 @@ describe('useGroupsQuery', () => {
 })
 
 describe('useCreateGroup', () => {
-  it('mutation resolves with new group (no parent)', async () => {
-    const { wrapper } = makeQueryWrapper()
+  it('mutation resolves with new group (no parent) and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useCreateGroup(DOMAIN_ID), { wrapper })
     result.current.mutate({ title: 'Editors' })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.Title).toBe('Editors')
     expect(result.current.data?.ParentGroupID).toBeNull()
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['groups', DOMAIN_ID] })
   })
 
   it('mutation resolves with new group (with parent)', async () => {
@@ -52,11 +54,34 @@ describe('useCreateGroup', () => {
   })
 })
 
-describe('useDeleteGroup', () => {
-  it('mutation resolves on delete', async () => {
+describe('useUpdateGroup', () => {
+  it('mutation resolves with updated group and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
+    const { result } = renderHook(() => useUpdateGroup(DOMAIN_ID), { wrapper })
+    result.current.mutate({ id: 'g1', data: { title: 'Renamed' } })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.Title).toBe('Renamed')
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['groups', DOMAIN_ID] })
+  })
+
+  it('mutation resolves when clearing parent group', async () => {
     const { wrapper } = makeQueryWrapper()
+    const { result } = renderHook(() => useUpdateGroup(DOMAIN_ID), { wrapper })
+    result.current.mutate({ id: 'g1', data: { title: 'Admins', parentGroupId: null } })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.ParentGroupID).toBeNull()
+  })
+})
+
+describe('useDeleteGroup', () => {
+  it('mutation resolves on delete and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useDeleteGroup(DOMAIN_ID), { wrapper })
     result.current.mutate('g1')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['groups', DOMAIN_ID] })
   })
 })
+

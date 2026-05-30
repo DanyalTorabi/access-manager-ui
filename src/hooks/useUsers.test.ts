@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useUsersQuery, useCreateUser, useDeleteUser } from '@/hooks/useUsers'
+import { useUsersQuery, useCreateUser, useUpdateUser, useDeleteUser } from '@/hooks/useUsers'
 import { server } from '@/test/server'
 import { http, HttpResponse } from 'msw'
 import { TEST_API_BASE as BASE } from '@/test/constants'
@@ -34,21 +34,38 @@ describe('useUsersQuery', () => {
 })
 
 describe('useCreateUser', () => {
-  it('mutation resolves with new user', async () => {
-    const { wrapper } = makeQueryWrapper()
+  it('mutation resolves with new user and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useCreateUser(DOMAIN_ID), { wrapper })
     result.current.mutate('Bob')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.Title).toBe('Bob')
     expect(result.current.data?.DomainID).toBe(DOMAIN_ID)
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
+  })
+})
+
+describe('useUpdateUser', () => {
+  it('mutation resolves with updated user and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
+    const { result } = renderHook(() => useUpdateUser(DOMAIN_ID), { wrapper })
+    result.current.mutate({ id: 'u1', title: 'Updated' })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.Title).toBe('Updated')
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
   })
 })
 
 describe('useDeleteUser', () => {
-  it('mutation resolves on delete', async () => {
-    const { wrapper } = makeQueryWrapper()
+  it('mutation resolves on delete and invalidates cache', async () => {
+    const { wrapper, queryClient } = makeQueryWrapper()
+    const spy = vi.spyOn(queryClient, 'invalidateQueries')
     const { result } = renderHook(() => useDeleteUser(DOMAIN_ID), { wrapper })
     result.current.mutate('u1')
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['users', DOMAIN_ID] })
   })
 })
+
